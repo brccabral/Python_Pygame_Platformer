@@ -15,7 +15,7 @@ class Player(pygame.sprite.Sprite):
         self.direction = pygame.math.Vector2(0,0)
         self.speed = 8
         self.gravity = 1
-        self.jump_speed = -16
+        self.jump_speed = -20
 
         # player status
         self.status = 'idle'
@@ -68,7 +68,8 @@ class Player(pygame.sprite.Sprite):
         else:
             self.direction.x = 0
         
-        if keys[K_SPACE]:
+        # player jumps only if on the ground
+        if keys[K_SPACE] and self.on_ground:
             self.jump()
     
     def get_status(self):
