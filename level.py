@@ -74,3 +74,5 @@ class Level:
                     player.rect.top = sprite.rect.bottom
                 elif player.direction.y > 0:
                     player.rect.bottom = sprite.rect.top
+                    # prevent from crossing the tile if player keeps standing on it
+                    player.direction.y = 0
