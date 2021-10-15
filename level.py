@@ -18,4 +18,5 @@ class Level:
                     self.tiles.add(tile)
 
     def run(self):
+        self.tiles.update(1)
         self.tiles.draw(self.display_surface)
