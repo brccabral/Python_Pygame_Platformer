@@ -72,6 +72,8 @@ class Level:
             if sprite.rect.colliderect(player.rect):
                 if player.direction.y < 0:
                     player.rect.top = sprite.rect.bottom
+                    # if player touches ceiling, stops player's jump
+                    player.direction.y = 0
                 elif player.direction.y > 0:
                     player.rect.bottom = sprite.rect.top
                     # prevent from crossing the tile if player keeps standing on it
