@@ -45,8 +45,13 @@ class Level:
         # level tiles
         self.tiles.update(self.world_shift)
         self.tiles.draw(self.display_surface)
+        self.scroll_x()
 
         # player
         self.player.update()
+        self.horizontal_movement_collision()
         self.player.draw(self.display_surface)
-        self.scroll_x()
+
+    def horizontal_movement_collision(self):
+        player: Player = self.player.sprite
+        player.rect.x += player.direction.x * player.speed
