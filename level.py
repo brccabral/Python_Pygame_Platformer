@@ -63,7 +63,10 @@ class Level:
                     if layout_type == 'crates':
                         sprite = Crate((x,y), tile_size)
                     if layout_type == 'coins':
-                        sprite = Coin((x,y), tile_size, 'assets/graphics/coins/gold')
+                        if cell == '0':
+                            sprite = Coin((x,y), tile_size, 'assets/graphics/coins/gold')
+                        else:
+                            sprite = Coin((x,y), tile_size, 'assets/graphics/coins/silver')
                     sprite_group.add(sprite)
         return sprite_group
 
