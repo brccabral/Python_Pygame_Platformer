@@ -20,3 +20,6 @@ class Enemy(AnimatedTile):
         self.animate()
         self.move()
         self.reverse_image()
+    
+    def reverse(self):
+        self.speed *= -1

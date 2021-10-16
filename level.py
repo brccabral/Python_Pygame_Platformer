@@ -42,8 +42,12 @@ class Level:
         self.bg_palms_sprites: pygame.sprite.Group = self.create_tile_group(bg_palms_layout, 'bg_palms')
 
         # enemy setup
-        enemy_layout = import_csv_layout(level_data['enemies'])
-        self.enemy_sprites: pygame.sprite.Group = self.create_tile_group(enemy_layout, 'enemies')
+        enemies_layout = import_csv_layout(level_data['enemies'])
+        self.enemies_sprites: pygame.sprite.Group = self.create_tile_group(enemies_layout, 'enemies')
+
+        # constraint
+        constraints_layout = import_csv_layout(level_data['constraints'])
+        self.constraints_sprites: pygame.sprite.Group = self.create_tile_group(constraints_layout, 'constraints')
 
         # player setup
         self.player = pygame.sprite.GroupSingle()
@@ -87,6 +91,8 @@ class Level:
                         sprite = Palm((x,y), tile_size, 'assets/graphics/terrain/palm_bg', 64)
                     if layout_type == 'enemies':
                         sprite = Enemy((x,y), tile_size)
+                    if layout_type == 'constraints':
+                        sprite = Tile((x,y), tile_size)
 
                     sprite_group.add(sprite)
         return sprite_group
@@ -126,8 +132,10 @@ class Level:
         self.bg_palms_sprites.draw(self.display_surface)
         self.terrain_sprites.update(self.world_shift)
         self.terrain_sprites.draw(self.display_surface)
-        self.enemy_sprites.update(self.world_shift)
-        self.enemy_sprites.draw(self.display_surface)
+        self.enemies_sprites.update(self.world_shift)
+        self.enemies_sprites.draw(self.display_surface)
+        self.constraints_sprites.update(self.world_shift) # don't draw constraints
+        self.enemy_constraint_collision()
         self.crates_sprites.update(self.world_shift)
         self.crates_sprites.draw(self.display_surface)
         self.grass_sprites.update(self.world_shift)
@@ -195,6 +203,14 @@ class Level:
             player.on_ground = False
         if player.on_ceiling and player.direction.y > 0:
             player.on_ceiling = False
+
+    def enemy_constraint_collision(self):
+        enemy: Enemy
+        for enemy in self.enemies_sprites.sprites():
+            if pygame.sprite.spritecollide(enemy, self.constraints_sprites, dokill=False):
+                enemy.reverse()
+
+
 
     def create_jump_particles(self, pos):
         if self.player.sprite.facing_right:
