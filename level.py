@@ -4,6 +4,7 @@ from player import Player
 from tiles import Tile
 from settings import tile_size, screen_width
 from support import import_csv_layout
+from typing import List
 
 class Level:
     def __init__(self, level_data, surface: pygame.Surface) -> None:
@@ -11,10 +12,12 @@ class Level:
         # level setup
         self.display_surface = surface
         terrain_layout = import_csv_layout(level_data['terrain'])
+        self.terrain_sprites: pygame.sprite.Group = self.create_tile_group(terrain_layout, 'terrain')
+
 
         self.tiles = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
-        player_sprite: Player = Player((0,0), self.display_surface, self.create_jump_particles)
+        player_sprite: Player = Player((642,180), self.display_surface, self.create_jump_particles)
         self.player.add(player_sprite)
         # self.setup_level_X(level_data)
         self.world_shift = 0
@@ -25,6 +28,19 @@ class Level:
         self.dust_sprite = pygame.sprite.GroupSingle()
         self.player_on_ground = False
     
+    def create_tile_group(self, layout: List, layout_type: str):
+        sprite_group = pygame.sprite.Group()
+        for row_index, row in enumerate(layout):
+            for column_index, cell in enumerate(row):
+                x = column_index * tile_size
+                y = row_index * tile_size
+                if cell != '-1':
+                    if layout_type == 'terrain':
+                        sprite = Tile((x,y), tile_size)
+                        sprite_group.add(sprite)
+                        print((x,y))
+        return sprite_group
+
     def setup_level_X(self, layout):
 
         for row_index, row in enumerate(layout):
@@ -55,7 +71,9 @@ class Level:
     def run(self):
         # level tiles
         self.tiles.update(self.world_shift)
+        self.terrain_sprites.update(self.world_shift)
         self.tiles.draw(self.display_surface)
+        self.terrain_sprites.draw(self.display_surface)
 
         # player
         self.horizontal_movement_collision()
