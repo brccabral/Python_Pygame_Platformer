@@ -1,4 +1,5 @@
 import pygame
+from pygame import sprite
 from enemy import Enemy
 from particles import ParticleEffect
 from player import Player
@@ -50,7 +51,10 @@ class Level:
         self.constraints_sprites: pygame.sprite.Group = self.create_tile_group(constraints_layout, 'constraints')
 
         # player setup
+        player_layout = import_csv_layout(level_data['player'])
         self.player = pygame.sprite.GroupSingle()
+        self.goal = pygame.sprite.GroupSingle()
+        self.player_setup(player_layout)
         player_sprite: Player = Player((642,180), self.display_surface, self.create_jump_particles)
         self.player.add(player_sprite)
 
@@ -59,6 +63,18 @@ class Level:
         self.dust_sprite = pygame.sprite.GroupSingle()
         self.player_on_ground = False
     
+    def player_setup(self, layout):
+        for row_index, row in enumerate(layout):
+            for column_index, cell in enumerate(row):
+                x = column_index * tile_size
+                y = row_index * tile_size
+                if cell == '0':
+                    print('start')
+                if cell == '1':
+                    hat_surface = pygame.image.load(resource_path('assets/graphics/character/hat.png')).convert_alpha()
+                    sprite = StaticTile((x,y), tile_size, hat_surface)
+                    self.goal.add(sprite)
+
     def create_tile_group(self, layout: List, layout_type: str):
         sprite_group = pygame.sprite.Group()
         if layout_type == 'terrain':
@@ -152,6 +168,8 @@ class Level:
         self.create_landing_dust() # this needs to be after vertical collision
         self.player.update()
         self.player.draw(self.display_surface)
+        self.goal.update(self.world_shift)
+        self.goal.draw(self.display_surface)
 
         # dust particles
         self.dust_sprite.update(self.world_shift)
