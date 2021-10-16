@@ -21,7 +21,12 @@ class Overworld:
                 node_sprite = Node(node_data['node_pos'], 'locked')
             self.nodes.add(node_sprite)
 
+    def draw_paths(self):
+        points = [node['node_pos'] for node in levels.values()]
+        pygame.draw.lines(self.display_surface, 'red', False, points, 6)
+
     def run(self):
+        self.draw_paths()
         self.nodes.draw(self.display_surface)
 
 class Node(pygame.sprite.Sprite):
