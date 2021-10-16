@@ -1,27 +1,27 @@
 import pygame
 from particles import ParticleEffect
 from player import Player
-from tiles import Tile
+from tiles import StaticTile, Tile
 from settings import tile_size, screen_width
-from support import import_csv_layout
+from support import import_csv_layout, import_cut_graphics
 from typing import List
 
 class Level:
     def __init__(self, level_data, surface: pygame.Surface) -> None:
 
-        # level setup
+        # general setup
         self.display_surface = surface
+        self.world_shift = 0
+        self.current_x = 0
+
+        # level setup
         terrain_layout = import_csv_layout(level_data['terrain'])
         self.terrain_sprites: pygame.sprite.Group = self.create_tile_group(terrain_layout, 'terrain')
-
-
         self.tiles = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
         player_sprite: Player = Player((642,180), self.display_surface, self.create_jump_particles)
         self.player.add(player_sprite)
         # self.setup_level_X(level_data)
-        self.world_shift = 0
-        self.current_x = 0
 
         # dust
         # it is single because we can't have jump and land at the same time
@@ -30,15 +30,17 @@ class Level:
     
     def create_tile_group(self, layout: List, layout_type: str):
         sprite_group = pygame.sprite.Group()
+        if layout_type == 'terrain':
+            terrain_tile_list = import_cut_graphics('assets/graphics/terrain/terrain_tiles.png')
         for row_index, row in enumerate(layout):
             for column_index, cell in enumerate(row):
                 x = column_index * tile_size
                 y = row_index * tile_size
                 if cell != '-1':
                     if layout_type == 'terrain':
-                        sprite = Tile((x,y), tile_size)
+                        tile_surface = terrain_tile_list[int(cell)]
+                        sprite = StaticTile((x,y), tile_size, tile_surface)
                         sprite_group.add(sprite)
-                        print((x,y))
         return sprite_group
 
     def setup_level_X(self, layout):
