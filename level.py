@@ -63,12 +63,12 @@ class Level:
             if sprite.rect.colliderect(player.rect):
                 if player.direction.x < 0:
                     player.rect.left = sprite.rect.right
-                    player.on_left = True
+                    player.on_right = True
                     self.current_x = sprite.rect.right
                     player.direction.x = 0
                 elif player.direction.x > 0:
                     player.rect.right = sprite.rect.left
-                    player.on_right = True
+                    player.on_left = True
                     self.current_x = sprite.rect.left
                     player.direction.x = 0
         
