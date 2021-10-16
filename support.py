@@ -2,6 +2,7 @@ from os import walk
 from os.path import join
 import sys
 from typing import List
+from csv import reader
 
 import pygame
 
@@ -20,6 +21,11 @@ def import_folder(path) -> List[pygame.Surface]:
             surface_list.append(image_surface)
     
     return surface_list
+
+def import_csv_layout(path):
+    with open(path) as map:
+        level = reader(map, delimiter=',')
+        print(level)
 
 if __name__ == "__main__":
     pygame.init()
