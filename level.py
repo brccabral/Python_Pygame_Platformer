@@ -1,4 +1,5 @@
 import pygame
+from enemy import Enemy
 from particles import ParticleEffect
 from player import Player
 from tiles import Coin, Crate, Palm, StaticTile, Tile
@@ -40,6 +41,10 @@ class Level:
         bg_palms_layout = import_csv_layout(level_data['bg_palms'])
         self.bg_palms_sprites: pygame.sprite.Group = self.create_tile_group(bg_palms_layout, 'bg_palms')
 
+        # enemy setup
+        enemy_layout = import_csv_layout(level_data['enemies'])
+        self.enemy_sprites: pygame.sprite.Group = self.create_tile_group(enemy_layout, 'enemies')
+
         # player setup
         self.player = pygame.sprite.GroupSingle()
         player_sprite: Player = Player((642,180), self.display_surface, self.create_jump_particles)
@@ -80,7 +85,9 @@ class Level:
                         if cell == '1': sprite = Palm((x,y), tile_size, 'assets/graphics/terrain/palm_large', 64)
                     if layout_type == 'bg_palms':
                         sprite = Palm((x,y), tile_size, 'assets/graphics/terrain/palm_bg', 64)
-                        
+                    if layout_type == 'enemies':
+                        sprite = Enemy((x,y), tile_size)
+
                     sprite_group.add(sprite)
         return sprite_group
 
@@ -119,10 +126,12 @@ class Level:
         self.bg_palms_sprites.draw(self.display_surface)
         self.terrain_sprites.update(self.world_shift)
         self.terrain_sprites.draw(self.display_surface)
-        self.grass_sprites.update(self.world_shift)
-        self.grass_sprites.draw(self.display_surface)
+        self.enemy_sprites.update(self.world_shift)
+        self.enemy_sprites.draw(self.display_surface)
         self.crates_sprites.update(self.world_shift)
         self.crates_sprites.draw(self.display_surface)
+        self.grass_sprites.update(self.world_shift)
+        self.grass_sprites.draw(self.display_surface)
         self.coins_sprites.update(self.world_shift)
         self.coins_sprites.draw(self.display_surface)
         self.fg_palms_sprites.update(self.world_shift)
