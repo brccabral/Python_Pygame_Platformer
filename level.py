@@ -72,6 +72,7 @@ class Level:
                     self.current_x = sprite.rect.left
                     player.direction.x = 0
         
+        # avoid image offset pixels due to different image sizes for the animation
         if player.on_left and (player.rect.left < self.current_x or player.direction.x >= 0):
             player.on_left = False
         if player.on_right and(player.rect.right > self.current_x or player.direction.x <= 0):

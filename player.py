@@ -49,6 +49,7 @@ class Player(pygame.sprite.Sprite):
             self.image = flipped_image
         
         # set the rect
+        # avoid image offset pixels due to different image sizes for the animation
         if self.on_ground and self.on_right:
             self.rect = self.image.get_rect(bottomright = self.rect.bottomright)
         elif self.on_ground and self.on_left:
