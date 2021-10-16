@@ -56,8 +56,7 @@ class Level:
         self.player = pygame.sprite.GroupSingle()
         self.goal = pygame.sprite.GroupSingle()
         self.player_setup(player_layout)
-        player_sprite: Player = Player((642,180), self.display_surface, self.create_jump_particles)
-        self.player.add(player_sprite)
+        
 
         # dust
         # it is single because we can't have jump and land at the same time
@@ -76,7 +75,8 @@ class Level:
                 x = column_index * tile_size
                 y = row_index * tile_size
                 if cell == '0':
-                    print('start')
+                    sprite = Player((x,y), self.display_surface, self.create_jump_particles)
+                    self.player.add(sprite)
                 if cell == '1':
                     hat_surface = pygame.image.load(resource_path('assets/graphics/character/hat.png')).convert_alpha()
                     sprite = StaticTile((x,y), tile_size, hat_surface)
