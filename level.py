@@ -29,7 +29,7 @@ class Level:
                     tile = Tile((x,y), tile_size)
                     self.tiles.add(tile)
                 if cell == 'P':
-                    player_sprite = Player((x,y), self.display_surface, self.create_jump_particles)
+                    player_sprite: Player = Player((x,y), self.display_surface, self.create_jump_particles)
                     self.player.add(player_sprite)
 
     def scroll_x(self):
@@ -110,5 +110,10 @@ class Level:
             player.on_ceiling = False
 
     def create_jump_particles(self, pos):
+        player_sprite: Player = self.player.sprite
+        if player_sprite.facing_right:
+            pos -= pygame.math.Vector2(15,5)
+        else:
+            pos += pygame.math.Vector2(-5,5)
         jump_particle_sprite = ParticleEffect(pos, 'jump')
         self.dust_sprite.add(jump_particle_sprite)

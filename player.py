@@ -1,9 +1,10 @@
+from typing import Callable
 import pygame
 from pygame.constants import K_SPACE
 from support import import_folder
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, surface: pygame.Surface, create_jump_particles) -> None:
+    def __init__(self, pos, surface: pygame.Surface, create_jump_particles: Callable) -> None:
         super().__init__()
         self.import_character_assets()
         self.frame_index = 0
