@@ -35,6 +35,10 @@ class Level:
         # foreground palms setup
         fg_palms_layout = import_csv_layout(level_data['fg_palms'])
         self.fg_palms_sprites: pygame.sprite.Group = self.create_tile_group(fg_palms_layout, 'fg_palms')
+        
+        # background palms setup
+        bg_palms_layout = import_csv_layout(level_data['bg_palms'])
+        self.bg_palms_sprites: pygame.sprite.Group = self.create_tile_group(bg_palms_layout, 'bg_palms')
 
         # player setup
         self.player = pygame.sprite.GroupSingle()
@@ -74,6 +78,9 @@ class Level:
                     if layout_type == 'fg_palms':
                         if cell == '0': sprite = Palm((x,y), tile_size, 'assets/graphics/terrain/palm_small', 38)
                         if cell == '1': sprite = Palm((x,y), tile_size, 'assets/graphics/terrain/palm_large', 64)
+                    if layout_type == 'bg_palms':
+                        sprite = Palm((x,y), tile_size, 'assets/graphics/terrain/palm_bg', 64)
+                        
                     sprite_group.add(sprite)
         return sprite_group
 
@@ -108,6 +115,8 @@ class Level:
         # level tiles
         self.tiles.update(self.world_shift)
         self.tiles.draw(self.display_surface)
+        self.bg_palms_sprites.update(self.world_shift)
+        self.bg_palms_sprites.draw(self.display_surface)
         self.terrain_sprites.update(self.world_shift)
         self.terrain_sprites.draw(self.display_surface)
         self.grass_sprites.update(self.world_shift)
