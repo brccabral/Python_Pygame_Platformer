@@ -104,6 +104,8 @@ class Level:
         self.grass_sprites.draw(self.display_surface)
         self.crates_sprites.update(self.world_shift)
         self.crates_sprites.draw(self.display_surface)
+        self.coins_sprites.update(self.world_shift)
+        self.coins_sprites.draw(self.display_surface)
 
         # player
         self.horizontal_movement_collision()

@@ -27,4 +27,5 @@ class AnimatedTile(Tile):
     def __init__(self, pos, size, path) -> None:
         super().__init__(pos, size)
         self.frames = import_folder(path)
-        print(self.frames)
+        self.frame_index = 0
+        self.image = self.frames[self.frame_index]
