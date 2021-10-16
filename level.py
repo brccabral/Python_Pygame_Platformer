@@ -1,5 +1,6 @@
 import pygame
 from pygame import sprite
+from decoration import Sky
 from enemy import Enemy
 from particles import ParticleEffect
 from player import Player
@@ -62,6 +63,9 @@ class Level:
         # it is single because we can't have jump and land at the same time
         self.dust_sprite = pygame.sprite.GroupSingle()
         self.player_on_ground = False
+
+        # decoration
+        self.sky = Sky(8)
     
     def player_setup(self, layout):
         for row_index, row in enumerate(layout):
@@ -141,6 +145,8 @@ class Level:
             player.speed = 8
 
     def run(self):
+        self.sky.draw(self.display_surface)
+        
         # level tiles
         self.tiles.update(self.world_shift)
         self.tiles.draw(self.display_surface)
@@ -160,6 +166,7 @@ class Level:
         self.coins_sprites.draw(self.display_surface)
         self.fg_palms_sprites.update(self.world_shift)
         self.fg_palms_sprites.draw(self.display_surface)
+
 
         # player
         self.horizontal_movement_collision()
