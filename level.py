@@ -1,7 +1,7 @@
 import pygame
 from particles import ParticleEffect
 from player import Player
-from tiles import Crate, StaticTile, Tile
+from tiles import AnimatedTile, Crate, StaticTile, Tile
 from settings import tile_size, screen_width
 from support import import_csv_layout, import_cut_graphics, resource_path
 from typing import List
@@ -27,6 +27,10 @@ class Level:
         # crates setup
         crates_layout = import_csv_layout(level_data['crates'])
         self.crates_sprites: pygame.sprite.Group = self.create_tile_group(crates_layout, 'crates')
+        
+        # crates setup
+        coins_layout = import_csv_layout(level_data['coins'])
+        self.coins_sprites: pygame.sprite.Group = self.create_tile_group(coins_layout, 'coins')
 
         # player setup
         self.player = pygame.sprite.GroupSingle()
@@ -58,6 +62,8 @@ class Level:
                         sprite = StaticTile((x,y), tile_size, tile_surface)
                     if layout_type == 'crates':
                         sprite = Crate((x,y), tile_size)
+                    if layout_type == 'coins':
+                        sprite = AnimatedTile((x,y), tile_size, 'assets/graphics/coins/gold')
                     sprite_group.add(sprite)
         return sprite_group
 
