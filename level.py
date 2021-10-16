@@ -1,11 +1,11 @@
 import pygame
 from pygame import sprite
-from decoration import Sky
+from decoration import Sky, Water
 from enemy import Enemy
 from particles import ParticleEffect
 from player import Player
 from tiles import Coin, Crate, Palm, StaticTile, Tile
-from settings import tile_size, screen_width
+from settings import tile_size, screen_width, screen_height
 from support import import_csv_layout, import_cut_graphics, resource_path
 from typing import List
 
@@ -66,6 +66,8 @@ class Level:
 
         # decoration
         self.sky = Sky(8)
+        level_width = len(terrain_layout[0]) * tile_size
+        self.water = Water(screen_height - 20, level_width)
     
     def player_setup(self, layout):
         for row_index, row in enumerate(layout):
@@ -146,7 +148,7 @@ class Level:
 
     def run(self):
         self.sky.draw(self.display_surface)
-        
+
         # level tiles
         self.tiles.update(self.world_shift)
         self.tiles.draw(self.display_surface)
@@ -181,6 +183,8 @@ class Level:
         # dust particles
         self.dust_sprite.update(self.world_shift)
         self.dust_sprite.draw(self.display_surface)
+
+        self.water.draw(self.display_surface, self.world_shift)
 
         self.scroll_x()
 
