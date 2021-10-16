@@ -39,4 +39,10 @@ class AnimatedTile(Tile):
     def update(self, x_shift):
         super().update(x_shift)
         self.animate()
-        
+
+class Coin(AnimatedTile):
+    def __init__(self, pos, size, path) -> None:
+        super().__init__(pos, size, path)
+        cx = pos[0] + size // 2
+        cy = pos[1] + size // 2
+        self.rect = self.image.get_rect(center = (cx, cy))
