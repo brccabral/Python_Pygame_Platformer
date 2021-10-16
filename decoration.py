@@ -17,4 +17,9 @@ class Sky:
     def draw(self, surface: pygame.Surface):
         for row in range(vertical_tile_number):
             y = row * tile_size
-            surface.blit(self.top, (0,y))
+            if row < self.horizon:
+                surface.blit(self.top, (0,y))
+            elif row == self.horizon:
+                surface.blit(self.middle, (0,y))
+            else:
+                surface.blit(self.bottom, (0,y))
