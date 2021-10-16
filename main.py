@@ -5,7 +5,8 @@ from settings import *
 
 class Game:
     def __init__(self) -> None:
-        self.overworld = Overworld()
+        self.max_level = 3
+        self.overworld = Overworld(0, self.max_level, screen)
     
     def run(self):
         self.overworld.run()
