@@ -1,6 +1,6 @@
 import pygame
 from pygame import sprite
-from decoration import Sky, Water
+from decoration import Clouds, Sky, Water
 from enemy import Enemy
 from particles import ParticleEffect
 from player import Player
@@ -68,6 +68,7 @@ class Level:
         self.sky = Sky(8)
         level_width = len(terrain_layout[0]) * tile_size
         self.water = Water(screen_height - 20, level_width)
+        self.clouds = Clouds(400, level_width, 20)
     
     def player_setup(self, layout):
         for row_index, row in enumerate(layout):
@@ -148,6 +149,7 @@ class Level:
 
     def run(self):
         self.sky.draw(self.display_surface)
+        self.clouds.draw(self.display_surface, self.world_shift)
 
         # level tiles
         self.tiles.update(self.world_shift)

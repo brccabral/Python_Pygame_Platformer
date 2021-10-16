@@ -1,8 +1,9 @@
 import pygame
 from pygame import sprite
-from support import resource_path
+from support import import_folder, resource_path
 from settings import vertical_tile_number, tile_size, screen_width
-from tiles import AnimatedTile
+from tiles import AnimatedTile, StaticTile
+from random import choice, randint
 
 class Sky:
     def  __init__(self, horizon) -> None:
@@ -44,3 +45,23 @@ class Water:
     def draw(self, surface, shift):
         self.water_sprites.update(shift)
         self.water_sprites.draw(surface)
+
+class Clouds:
+    def __init__(self, horizon, level_width, cloud_number) -> None:
+        cloud_surface_list = import_folder('assets/graphics/decoration/clouds')
+        min_x = -screen_width
+        max_x = level_width + screen_width
+        min_y = 0
+        max_y = horizon
+        self.could_sprites = pygame.sprite.Group()
+
+        for cloud in range(cloud_number):
+            cloud_surface = choice(cloud_surface_list)
+            x = randint(min_x, max_x)
+            y = randint(min_y, max_y)
+            sprite = StaticTile((x,y), 0, cloud_surface)
+            self.could_sprites.add(sprite)
+    
+    def draw(self, surface, shift):
+        self.could_sprites.update(shift)
+        self.could_sprites.draw(surface)
