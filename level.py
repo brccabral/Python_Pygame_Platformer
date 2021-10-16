@@ -1,7 +1,7 @@
 import pygame
 from particles import ParticleEffect
 from player import Player
-from tiles import Coin, Crate, StaticTile, Tile
+from tiles import Coin, Crate, Palm, StaticTile, Tile
 from settings import tile_size, screen_width
 from support import import_csv_layout, import_cut_graphics, resource_path
 from typing import List
@@ -31,6 +31,10 @@ class Level:
         # crates setup
         coins_layout = import_csv_layout(level_data['coins'])
         self.coins_sprites: pygame.sprite.Group = self.create_tile_group(coins_layout, 'coins')
+        
+        # foreground palms setup
+        fg_palms_layout = import_csv_layout(level_data['fg_palms'])
+        self.fg_palms_sprites: pygame.sprite.Group = self.create_tile_group(fg_palms_layout, 'fg_palms')
 
         # player setup
         self.player = pygame.sprite.GroupSingle()
@@ -67,6 +71,8 @@ class Level:
                             sprite = Coin((x,y), tile_size, 'assets/graphics/coins/gold')
                         else:
                             sprite = Coin((x,y), tile_size, 'assets/graphics/coins/silver')
+                    if layout_type == 'fg_palms':
+                        sprite = Palm((x,y), tile_size, 'assets/graphics/terrain/palm_small')
                     sprite_group.add(sprite)
         return sprite_group
 
@@ -109,6 +115,8 @@ class Level:
         self.crates_sprites.draw(self.display_surface)
         self.coins_sprites.update(self.world_shift)
         self.coins_sprites.draw(self.display_surface)
+        self.fg_palms_sprites.update(self.world_shift)
+        self.fg_palms_sprites.draw(self.display_surface)
 
         # player
         self.horizontal_movement_collision()
