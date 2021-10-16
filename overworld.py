@@ -22,7 +22,7 @@ class Overworld:
             self.nodes.add(node_sprite)
 
     def draw_paths(self):
-        points = [node['node_pos'] for node in levels.values()]
+        points = [node['node_pos'] for index, node in enumerate(levels.values()) if index <= self.max_level]
         pygame.draw.lines(self.display_surface, 'red', False, points, 6)
 
     def run(self):
