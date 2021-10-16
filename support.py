@@ -1,6 +1,7 @@
 from os import walk
 from os.path import join
 import sys
+from typing import List
 
 import pygame
 
@@ -9,7 +10,7 @@ def resource_path(relative):
         return join(sys._MEIPASS, relative)
     return join(relative)
 
-def import_folder(path):
+def import_folder(path) -> List[pygame.Surface]:
     surface_list = []
     
     for _,__,img_files in walk(path):

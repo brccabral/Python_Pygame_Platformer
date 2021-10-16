@@ -3,7 +3,7 @@ from pygame.constants import K_SPACE
 from support import import_folder
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, surface: pygame.Surface) -> None:
+    def __init__(self, pos, surface: pygame.Surface, create_jump_particles) -> None:
         super().__init__()
         self.import_character_assets()
         self.frame_index = 0
@@ -30,6 +30,7 @@ class Player(pygame.sprite.Sprite):
         self.import_dust_run_particles()
         self.dust_frame_index = 0
         self.dust_animation_speed = 0.15
+        self.create_jump_particles = create_jump_particles
 
     def import_character_assets(self):
         character_path = 'assets/graphics/character/'
@@ -105,6 +106,7 @@ class Player(pygame.sprite.Sprite):
         # player jumps only if on the ground
         if keys[K_SPACE] and self.on_ground:
             self.jump()
+            self.create_jump_particles(self.rect.midbottom)
     
     def get_status(self):
         if self.direction.y < 0:
