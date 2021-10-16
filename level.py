@@ -72,7 +72,7 @@ class Level:
                         else:
                             sprite = Coin((x,y), tile_size, 'assets/graphics/coins/silver')
                     if layout_type == 'fg_palms':
-                        sprite = Palm((x,y), tile_size, 'assets/graphics/terrain/palm_small')
+                        sprite = Palm((x,y), tile_size, 'assets/graphics/terrain/palm_small', 38)
                     sprite_group.add(sprite)
         return sprite_group
 
