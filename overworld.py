@@ -14,16 +14,22 @@ class Overworld:
     
     def setup_nodes(self):
         self.nodes = pygame.sprite.Group()
-        for node_data in levels.values():
-            node_sprite = Node(node_data['node_pos'])
+        for index, node_data in enumerate(levels.values()):
+            if index <= self.max_level:
+                node_sprite = Node(node_data['node_pos'], 'available')
+            else:
+                node_sprite = Node(node_data['node_pos'], 'locked')
             self.nodes.add(node_sprite)
 
     def run(self):
         self.nodes.draw(self.display_surface)
 
 class Node(pygame.sprite.Sprite):
-    def __init__(self, pos) -> None:
+    def __init__(self, pos, status) -> None:
         super().__init__()
         self.image = pygame.Surface((100,80))
-        self.image.fill('red')
+        if status == 'available':
+            self.image.fill('red')
+        else:
+            self.image.fill('grey')
         self.rect = self.image.get_rect(center = pos)
