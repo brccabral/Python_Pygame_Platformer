@@ -16,6 +16,7 @@ class Level:
         # dust
         # it is single because we can't have jump and land at the same time
         self.dust_sprite = pygame.sprite.GroupSingle()
+        self.player_on_ground = False
     
     def setup_level(self, layout):
         self.tiles = pygame.sprite.Group()
@@ -54,7 +55,9 @@ class Level:
 
         # player
         self.horizontal_movement_collision()
+        self.get_player_on_ground() # this needs to be before vertical collision
         self.vertical_movement_collision()
+        self.create_landing_dust() # this needs to be after vertical collision
         self.player.update()
         self.player.draw(self.display_surface)
 
@@ -110,10 +113,25 @@ class Level:
             player.on_ceiling = False
 
     def create_jump_particles(self, pos):
-        player_sprite: Player = self.player.sprite
-        if player_sprite.facing_right:
+        if self.player.sprite.facing_right:
             pos -= pygame.math.Vector2(15,5)
         else:
             pos += pygame.math.Vector2(-5,5)
         jump_particle_sprite = ParticleEffect(pos, 'jump')
         self.dust_sprite.add(jump_particle_sprite)
+
+    def get_player_on_ground(self):
+        # save the on_ground state before the vertical collision
+        # if there is a collision after, it means the player
+        # was on the air
+        self.player_on_ground = self.player.sprite.on_ground
+    
+    def create_landing_dust(self):
+        # check if player was on the air before the vertical collision
+        if not self.player_on_ground and self.player.sprite.on_ground and not self.dust_sprite.sprites():
+            if self.player.sprite.facing_right:
+                offset = pygame.math.Vector2(10,15)
+            else:
+                offset = pygame.math.Vector2(-10,15)
+            fall_dust_particle = ParticleEffect(self.player.sprite.rect.midbottom - offset, 'land')
+            self.dust_sprite.add(fall_dust_particle)
