@@ -1,9 +1,9 @@
 import pygame
 from particles import ParticleEffect
 from player import Player
-from tiles import StaticTile, Tile
+from tiles import Crate, StaticTile, Tile
 from settings import tile_size, screen_width
-from support import import_csv_layout, import_cut_graphics
+from support import import_csv_layout, import_cut_graphics, resource_path
 from typing import List
 
 class Level:
@@ -23,6 +23,10 @@ class Level:
         # grass setup
         grass_layout = import_csv_layout(level_data['grass'])
         self.grass_sprites: pygame.sprite.Group = self.create_tile_group(grass_layout, 'grass')
+        
+        # crates setup
+        crates_layout = import_csv_layout(level_data['crates'])
+        self.crates_sprites: pygame.sprite.Group = self.create_tile_group(crates_layout, 'crates')
 
         # player setup
         self.player = pygame.sprite.GroupSingle()
@@ -37,9 +41,10 @@ class Level:
     def create_tile_group(self, layout: List, layout_type: str):
         sprite_group = pygame.sprite.Group()
         if layout_type == 'terrain':
-            terrain_tile_list = import_cut_graphics('assets/graphics/terrain/terrain_tiles.png')
+            terrain_tile_list = import_cut_graphics(resource_path('assets/graphics/terrain/terrain_tiles.png'))
         if layout_type == 'grass':
-            grass_tile_list = import_cut_graphics('assets/graphics/decoration/grass/grass.png')
+            grass_tile_list = import_cut_graphics(resource_path('assets/graphics/decoration/grass/grass.png'))
+        
         for row_index, row in enumerate(layout):
             for column_index, cell in enumerate(row):
                 x = column_index * tile_size
@@ -47,9 +52,12 @@ class Level:
                 if cell != '-1':
                     if layout_type == 'terrain':
                         tile_surface = terrain_tile_list[int(cell)]
+                        sprite = StaticTile((x,y), tile_size, tile_surface)
                     if layout_type == 'grass':
                         tile_surface = grass_tile_list[int(cell)]
-                    sprite = StaticTile((x,y), tile_size, tile_surface)
+                        sprite = StaticTile((x,y), tile_size, tile_surface)
+                    if layout_type == 'crates':
+                        sprite = Crate((x,y), tile_size)
                     sprite_group.add(sprite)
         return sprite_group
 
@@ -88,6 +96,8 @@ class Level:
         self.terrain_sprites.draw(self.display_surface)
         self.grass_sprites.update(self.world_shift)
         self.grass_sprites.draw(self.display_surface)
+        self.crates_sprites.update(self.world_shift)
+        self.crates_sprites.draw(self.display_surface)
 
         # player
         self.horizontal_movement_collision()
