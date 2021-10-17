@@ -1,6 +1,7 @@
 from typing import Callable
 import pygame
 from game_data import levels
+from support import import_folder
 
 class Overworld:
     def __init__(self, start_level: int, max_level: int, surface: pygame.Surface, create_level: Callable) -> None:
@@ -26,9 +27,9 @@ class Overworld:
         self.nodes = pygame.sprite.Group()
         for index, node_data in enumerate(levels.values()):
             if index <= self.max_level:
-                node_sprite = Node(node_data['node_pos'], 'available', self.speed)
+                node_sprite = Node(node_data['node_pos'], 'available', self.speed, node_data['node_graphics'])
             else:
-                node_sprite = Node(node_data['node_pos'], 'locked', self.speed)
+                node_sprite = Node(node_data['node_pos'], 'locked', self.speed, node_data['node_graphics'])
             self.nodes.add(node_sprite)
 
     def setup_icon(self):
@@ -38,7 +39,7 @@ class Overworld:
     def draw_paths(self):
         if self.max_level > 0:
             points = [node['node_pos'] for index, node in enumerate(levels.values()) if index <= self.max_level]
-            pygame.draw.lines(self.display_surface, 'red', False, points, 6)
+            pygame.draw.lines(self.display_surface, '#a04f45', False, points, 6)
         points = [node['node_pos'] for index, node in enumerate(levels.values()) if index >= self.max_level]
         if len(points) > 0:
             pygame.draw.lines(self.display_surface, 'grey', False, points, 6)
@@ -77,24 +78,40 @@ class Overworld:
         self.icon.update()
         self.update_icon_pos()
         self.draw_paths()
+        self.nodes.update()
         self.nodes.draw(self.display_surface)
         self.icon.draw(self.display_surface)
 
 
 
 class Node(pygame.sprite.Sprite):
-    def __init__(self, pos, status, icon_speed) -> None:
+    def __init__(self, pos, status, icon_speed, path) -> None:
         # icon_speed is used to detect the stop point
         super().__init__()
-        self.image = pygame.Surface((100,80))
-        if status == 'available':
-            self.image.fill('red')
-        else:
-            self.image.fill('grey')
+        self.frames = import_folder(path)
+        self.frame_index = 0
+        self.image = self.frames[self.frame_index]
+        self.status = status
+        
         self.rect = self.image.get_rect(center = pos)
         
         # stop point
         self.detection_zone = pygame.Rect(self.rect.centerx - (icon_speed//2), self.rect.centery - (icon_speed//2), icon_speed, icon_speed)
+
+    def animate(self):
+        self.frame_index += 0.15
+        if self.frame_index >= len(self.frames):
+            self.frame_index = 0
+        self.image = self.frames[int(self.frame_index)]
+    
+    def update(self) -> None:
+        super().update()
+        if self.status == 'available':
+            self.animate()
+        else:
+            tint_surface = self.image.copy()
+            tint_surface.fill('black', None, pygame.BLEND_RGB_MULT)
+            self.image.blit(tint_surface, (0,0))
 
 class Icon(pygame.sprite.Sprite):
     '''

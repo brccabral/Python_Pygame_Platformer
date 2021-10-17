@@ -3,6 +3,7 @@ from sys import exit
 from overworld import Overworld
 from settings import *
 from level import Level
+from support import resource_path
 
 class Game:
     def __init__(self) -> None:
@@ -39,7 +40,10 @@ while True:
             pygame.quit()
             exit()
     
-    screen.fill('black')
+    sky = pygame.image.load(resource_path('assets/graphics/decoration/sky/sky_top.png')).convert()
+    sky = pygame.transform.scale(sky, (screen_width, screen_height))
+
+    screen.blit(sky, (0,0))
     game.run()
 
     pygame.display.update()
