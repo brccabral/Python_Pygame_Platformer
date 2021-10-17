@@ -6,11 +6,11 @@ from player import Player
 from tiles import Coin, Crate, Palm, StaticTile, Tile
 from settings import tile_size, screen_width, screen_height
 from support import import_csv_layout, import_cut_graphics, resource_path
-from typing import List
+from typing import Callable, List
 from game_data import levels, level_0_tiles
 
 class Level:
-    def __init__(self, current_level, surface: pygame.Surface) -> None:
+    def __init__(self, current_level, surface: pygame.Surface, create_overworld: Callable) -> None:
 
         # general setup
         self.display_surface = surface
@@ -23,6 +23,7 @@ class Level:
         level_content = level_info['content'] # level title
         self.new_max_level = level_info['unlock']
         level_data = level_0_tiles
+        self.create_overworld = create_overworld
 
         # level display
         self.font = pygame.font.Font(None, 40)
@@ -159,7 +160,17 @@ class Level:
             self.world_shift = 0
             player.speed = 8
 
+    def input(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_RETURN]:
+            # unlocks new level
+            self.create_overworld(self.current_level, self.new_max_level)
+        if keys[pygame.K_ESCAPE]:
+            # keep new level unchanged
+            self.create_overworld(self.current_level, 0)
+
     def run(self):
+        self.input()
         self.sky.draw(self.display_surface)
         self.clouds.draw(self.display_surface, self.world_shift)
         self.display_surface.blit(self.text_surface, self.text_rect)
