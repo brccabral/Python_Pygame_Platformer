@@ -213,6 +213,9 @@ class Level:
 
         self.scroll_x()
 
+        self.check_death()
+        self.check_win()
+
     def horizontal_movement_collision(self):
         player: Player = self.player.sprite
         player.rect.x += player.direction.x * player.speed
@@ -266,7 +269,13 @@ class Level:
             if pygame.sprite.spritecollide(enemy, self.constraints_sprites, dokill=False):
                 enemy.reverse()
 
+    def check_death(self):
+        if self.player.sprite.rect.top > screen_height:
+            self.create_overworld(self.current_level, 0)
 
+    def check_win(self):
+        if pygame.sprite.spritecollide(self.player.sprite, self.goal, False):
+            self.create_overworld(self.current_level, self.new_max_level)
 
     def create_jump_particles(self, pos):
         if self.player.sprite.facing_right:
