@@ -1,5 +1,4 @@
 import pygame
-from pygame import sprite
 from decoration import Clouds, Sky, Water
 from enemy import Enemy
 from particles import ParticleEffect
@@ -8,14 +7,27 @@ from tiles import Coin, Crate, Palm, StaticTile, Tile
 from settings import tile_size, screen_width, screen_height
 from support import import_csv_layout, import_cut_graphics, resource_path
 from typing import List
+from game_data import levels, level_0_tiles
 
 class Level:
-    def __init__(self, level_data, surface: pygame.Surface) -> None:
+    def __init__(self, current_level, surface: pygame.Surface) -> None:
 
         # general setup
         self.display_surface = surface
+        self.current_level = current_level
         self.world_shift = 0
         self.current_x = 0
+
+        # level setup
+        level_info = levels[current_level]
+        level_content = level_info['content'] # level title
+        self.new_max_level = level_info['unlock']
+        level_data = level_0_tiles
+
+        # level display
+        self.font = pygame.font.Font(None, 40)
+        self.text_surface = self.font.render(level_content, True, 'White')
+        self.text_rect = self.text_surface.get_rect(center = (screen_width//2, screen_height//2))
 
         # terrain setup
         terrain_layout = import_csv_layout(level_data['terrain'])
@@ -150,6 +162,7 @@ class Level:
     def run(self):
         self.sky.draw(self.display_surface)
         self.clouds.draw(self.display_surface, self.world_shift)
+        self.display_surface.blit(self.text_surface, self.text_rect)
 
         # level tiles
         self.tiles.update(self.world_shift)

@@ -2,14 +2,16 @@ import pygame
 from sys import exit
 from overworld import Overworld
 from settings import *
+from level import Level
 
 class Game:
     def __init__(self) -> None:
         self.max_level = 3
         self.overworld = Overworld(0, self.max_level, screen)
+        self.level = Level(1, screen)
     
     def run(self):
-        self.overworld.run()
+        self.level.run()
 
 pygame.init()
 screen = pygame.display.set_mode((screen_width, screen_height))

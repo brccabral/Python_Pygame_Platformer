@@ -1,6 +1,5 @@
 from typing import Callable
 import pygame
-from pygame.constants import K_SPACE
 from support import import_folder
 
 class Player(pygame.sprite.Sprite):
@@ -105,7 +104,7 @@ class Player(pygame.sprite.Sprite):
             self.direction.x = 0
         
         # player jumps only if on the ground
-        if keys[K_SPACE] and self.on_ground:
+        if keys[pygame.K_SPACE] and self.on_ground:
             self.jump()
             self.create_jump_particles(self.rect.midbottom)
     
