@@ -7,11 +7,14 @@ from level import Level
 class Game:
     def __init__(self) -> None:
         self.max_level = 3
-        self.overworld = Overworld(0, self.max_level, screen)
+        self.overworld = Overworld(0, self.max_level, screen, self.create_level)
         self.level = Level(1, screen)
     
+    def create_level(self, current_level):
+        print(f'{current_level=}')
+    
     def run(self):
-        self.level.run()
+        self.overworld.run()
 
 pygame.init()
 screen = pygame.display.set_mode((screen_width, screen_height))
