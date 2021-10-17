@@ -2,6 +2,7 @@ from typing import Callable
 import pygame
 from game_data import levels
 from support import import_folder
+from decoration import Sky
 
 class Overworld:
     def __init__(self, start_level: int, max_level: int, surface: pygame.Surface, create_level: Callable) -> None:
@@ -21,6 +22,7 @@ class Overworld:
         self.icon = pygame.sprite.GroupSingle()
         self.setup_nodes()
         self.setup_icon()
+        self.sky = Sky(8)
 
     
     def setup_nodes(self):
@@ -75,6 +77,7 @@ class Overworld:
 
     def run(self):
         self.input()
+        self.sky.draw(self.display_surface)
         self.icon.update()
         self.update_icon_pos()
         self.draw_paths()

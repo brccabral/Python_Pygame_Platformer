@@ -40,10 +40,6 @@ while True:
             pygame.quit()
             exit()
     
-    sky = pygame.image.load(resource_path('assets/graphics/decoration/sky/sky_top.png')).convert()
-    sky = pygame.transform.scale(sky, (screen_width, screen_height))
-
-    screen.blit(sky, (0,0))
     game.run()
 
     pygame.display.update()
