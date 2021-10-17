@@ -10,7 +10,7 @@ from typing import Callable, List
 from game_data import levels
 
 class Level:
-    def __init__(self, current_level, surface: pygame.Surface, create_overworld: Callable) -> None:
+    def __init__(self, current_level: int, surface: pygame.Surface, create_overworld: Callable) -> None:
 
         # general setup
         self.display_surface = surface
