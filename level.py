@@ -7,7 +7,7 @@ from tiles import Coin, Crate, Palm, StaticTile, Tile
 from settings import tile_size, screen_width, screen_height
 from support import import_csv_layout, import_cut_graphics, resource_path
 from typing import Callable, List
-from game_data import levels, level_0_tiles
+from game_data import levels
 
 class Level:
     def __init__(self, current_level, surface: pygame.Surface, create_overworld: Callable) -> None:
@@ -19,10 +19,9 @@ class Level:
         self.current_x = 0
 
         # level setup
-        level_info = levels[current_level]
-        level_content = level_info['content'] # level title
-        self.new_max_level = level_info['unlock']
-        level_data = level_0_tiles
+        level_data = levels[current_level]
+        level_content = level_data['content'] # level title
+        self.new_max_level = level_data['unlock']
         self.create_overworld = create_overworld
 
         # level display
