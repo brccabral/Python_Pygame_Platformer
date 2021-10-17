@@ -8,13 +8,14 @@ class Overworld:
         self.display_surface = surface
         self.max_level = max_level
         self.current_level = start_level
-        
+
         # movement logic
         self.move_direction = pygame.math.Vector2(0,0)
         self.speed = 8
         self.moving = False
 
         # sprites
+        self.icon = pygame.sprite.GroupSingle()
         self.setup_nodes()
         self.setup_icon()
 
@@ -29,7 +30,6 @@ class Overworld:
             self.nodes.add(node_sprite)
 
     def setup_icon(self):
-        self.icon = pygame.sprite.GroupSingle()
         icon_sprite = Icon(self.nodes.sprites()[self.current_level].rect.center)
         self.icon.add(icon_sprite)
 
@@ -57,8 +57,12 @@ class Overworld:
 
     def update_icon_pos(self):
         if self.moving:
-            self.icon.sprite.pos += self.move_direction * self.speed
-            target_level = self.nodes.sprites()[self.current_level]
+            sprite: Icon = self.icon.sprite
+            sprite.pos += self.move_direction * self.speed
+            target_node: Node = self.nodes.sprites()[self.current_level]
+            if target_node.detection_zone.collidepoint(sprite.pos):
+                self.moving = False
+                self.move_direction = pygame.math.Vector2(0,0)
 
     def run(self):
         self.input()
