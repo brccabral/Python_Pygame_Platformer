@@ -1,16 +1,25 @@
 import pygame
-from pygame import sprite
 from support import import_folder, resource_path
 from settings import vertical_tile_number, tile_size, screen_width
 from tiles import AnimatedTile, StaticTile
 from random import choice, randint
 
 class Sky:
-    def  __init__(self, horizon) -> None:
+    def  __init__(self, horizon, style = 'level') -> None:
         self.top = pygame.image.load(resource_path('assets/graphics/decoration/sky/sky_top.png')).convert()
         self.bottom = pygame.image.load(resource_path('assets/graphics/decoration/sky/sky_bottom.png')).convert()
         self.middle = pygame.image.load(resource_path('assets/graphics/decoration/sky/sky_middle.png')).convert()
         self.horizon = horizon
+
+        self.style = style
+        if self.style == 'overworld':
+            palm_surfaces = import_folder('assets/graphics/overworld/palms')
+            self.palms = []
+            for surface in [choice(palm_surfaces) for _ in range(10)]:
+                x = randint(0, screen_width)
+                y = self.horizon*tile_size + randint(50,100)
+                rect = surface.get_rect(midbottom = (x,y))
+                self.palms.append((surface, rect))
         
         # stretch
         self.top = pygame.transform.scale(self.top, (screen_width, tile_size))
@@ -26,6 +35,10 @@ class Sky:
                 surface.blit(self.middle, (0,y))
             else:
                 surface.blit(self.bottom, (0,y))
+        
+        if self.style == 'overworld':
+            for palm_surf, palm_rect in self.palms:
+                surface.blit(palm_surf, palm_rect)
 
 class Water:
     # the water needs to stretch more than the level width

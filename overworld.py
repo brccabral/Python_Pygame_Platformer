@@ -22,7 +22,7 @@ class Overworld:
         self.icon = pygame.sprite.GroupSingle()
         self.setup_nodes()
         self.setup_icon()
-        self.sky = Sky(8)
+        self.sky = Sky(8, 'overworld')
 
     
     def setup_nodes(self):
