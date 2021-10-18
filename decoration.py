@@ -20,6 +20,14 @@ class Sky:
                 y = self.horizon*tile_size + randint(50,100)
                 rect = surface.get_rect(midbottom = (x,y))
                 self.palms.append((surface, rect))
+
+            cloud_surfaces = import_folder('assets/graphics/overworld/clouds')
+            self.clouds = []
+            for surface in [choice(cloud_surfaces) for _ in range(10)]:
+                x = randint(0, screen_width)
+                y = randint(0, self.horizon*tile_size - 100)
+                rect = surface.get_rect(midbottom = (x,y))
+                self.clouds.append((surface, rect))
         
         # stretch
         self.top = pygame.transform.scale(self.top, (screen_width, tile_size))
@@ -39,6 +47,8 @@ class Sky:
         if self.style == 'overworld':
             for palm_surf, palm_rect in self.palms:
                 surface.blit(palm_surf, palm_rect)
+            for cloud_surf, cloud_rect in self.clouds:
+                surface.blit(cloud_surf, cloud_rect)
 
 class Water:
     # the water needs to stretch more than the level width
