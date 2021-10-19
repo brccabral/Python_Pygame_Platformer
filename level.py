@@ -321,6 +321,7 @@ class Level:
                 enemy_top = enemy.rect.top
                 player_bottom = self.player.sprite.rect.bottom
                 if enemy_top < player_bottom < enemy_center and self.player.sprite.direction.y > 0:
+                    self.player.sprite.direction.y = -15
                     enemy.kill()
 
 
