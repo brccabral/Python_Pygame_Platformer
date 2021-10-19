@@ -83,6 +83,10 @@ class Level:
 
         # ui
         self.change_coins = change_coins
+        # audio
+        self.coin_sound = pygame.mixer.Sound(resource_path('assets/audio/effects/coin.wav'))
+        self.stomp_sound = pygame.mixer.Sound(resource_path('assets/audio/effects/stomp.wav'))
+
     
     def player_setup(self, layout: list, change_health: Callable):
         for row_index, row in enumerate(layout):
@@ -168,7 +172,7 @@ class Level:
         # level tiles
         self.bg_palms_sprites.update(self.world_shift)
         self.bg_palms_sprites.draw(self.display_surface)
-        
+
         # dust particles
         self.dust_sprite.update(self.world_shift)
         self.dust_sprite.draw(self.display_surface)
@@ -285,6 +289,7 @@ class Level:
     def check_coin_collisions(self):
         collided_coins: List[Coin] = pygame.sprite.spritecollide(self.player.sprite, self.coins_sprites, True)
         if collided_coins:
+            self.coin_sound.play()
             for coin in collided_coins:
                 self.change_coins(coin.value)
 
@@ -297,6 +302,7 @@ class Level:
                 enemy_top = enemy.rect.top
                 player_bottom = self.player.sprite.rect.bottom
                 if enemy_top < player_bottom < enemy_center and self.player.sprite.direction.y > 0:
+                    self.stomp_sound.play()
                     self.player.sprite.direction.y = -15
                     explosion_sprite = ParticleEffect(enemy.rect.center, 'explosion')
                     self.explosion_sprites.add(explosion_sprite)
