@@ -3,7 +3,7 @@ import pygame
 from support import import_folder
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, surface: pygame.Surface, create_jump_particles: Callable) -> None:
+    def __init__(self, pos, surface: pygame.Surface, create_jump_particles: Callable, change_health: Callable) -> None:
         super().__init__()
         self.import_character_assets()
         self.frame_index = 0
@@ -25,6 +25,10 @@ class Player(pygame.sprite.Sprite):
         self.on_ceiling = False
         self.on_left = False
         self.on_right = False
+
+        # health management
+        self.change_health = change_health
+        self.invincible = False
 
         # dust particles
         self.import_dust_run_particles()
@@ -89,7 +93,10 @@ class Player(pygame.sprite.Sprite):
                 flipped_dust_particle = pygame.transform.flip(dust_particle, True, False)
                 self.display_surface.blit(flipped_dust_particle, pos)
 
-
+    def get_damage(self):
+        if not self.invincible:
+            self.change_health(-10)
+            self.invincible = True
 
     def get_input(self):
         keys = pygame.key.get_pressed()

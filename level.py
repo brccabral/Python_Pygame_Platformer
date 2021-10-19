@@ -10,7 +10,7 @@ from typing import Callable, List
 from game_data import levels
 
 class Level:
-    def __init__(self, current_level: int, surface: pygame.Surface, create_overworld: Callable, change_coins: Callable) -> None:
+    def __init__(self, current_level: int, surface: pygame.Surface, create_overworld: Callable, change_coins: Callable, change_health: Callable) -> None:
 
         # general setup
         self.display_surface = surface
@@ -67,7 +67,7 @@ class Level:
         player_layout = import_csv_layout(level_data['player'])
         self.player = pygame.sprite.GroupSingle()
         self.goal = pygame.sprite.GroupSingle()
-        self.player_setup(player_layout)
+        self.player_setup(player_layout, change_health)
         
 
         # dust
@@ -87,13 +87,13 @@ class Level:
         # ui
         self.change_coins = change_coins
     
-    def player_setup(self, layout):
+    def player_setup(self, layout: list, change_health: Callable):
         for row_index, row in enumerate(layout):
             for column_index, cell in enumerate(row):
                 x = column_index * tile_size
                 y = row_index * tile_size
                 if cell == '0':
-                    sprite = Player((x,y), self.display_surface, self.create_jump_particles)
+                    sprite = Player((x,y), self.display_surface, self.create_jump_particles, change_health)
                     self.player.add(sprite)
                 if cell == '1':
                     hat_surface = pygame.image.load(resource_path('assets/graphics/character/hat.png')).convert_alpha()
@@ -330,5 +330,7 @@ class Level:
                     explosion_sprite = ParticleEffect(enemy.rect.center, 'explosion')
                     self.explosion_sprites.add(explosion_sprite)
                     enemy.kill()
+                else:
+                    self.player.sprite.get_damage()
 
 
