@@ -1,5 +1,8 @@
 # Creating a platformer game in Python with Pygame
 
+This project is a follow along with this video series by "Clear Code". I learned a lot from this tutorial and hope they release more in the future.  
+The game is easy, but creating new levels is very simple.  
+
 1. Introduction
 - https://www.youtube.com/watch?v=KJpP85tnOKg
 2. Initial setup, level, player, camera, animation
