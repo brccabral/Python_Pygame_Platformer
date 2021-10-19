@@ -119,9 +119,9 @@ class Level:
                         sprite = Crate((x,y), tile_size)
                     if layout_type == 'coins':
                         if cell == '0':
-                            sprite = Coin((x,y), tile_size, 'assets/graphics/coins/gold')
+                            sprite = Coin((x,y), tile_size, 'assets/graphics/coins/gold', 5)
                         else:
-                            sprite = Coin((x,y), tile_size, 'assets/graphics/coins/silver')
+                            sprite = Coin((x,y), tile_size, 'assets/graphics/coins/silver', 1)
                     if layout_type == 'fg_palms':
                         if cell == '0': sprite = Palm((x,y), tile_size, 'assets/graphics/terrain/palm_small', 38)
                         if cell == '1': sprite = Palm((x,y), tile_size, 'assets/graphics/terrain/palm_large', 64)
@@ -306,7 +306,7 @@ class Level:
             self.dust_sprite.add(fall_dust_particle)
     
     def check_coin_collisions(self):
-        collided_coins = pygame.sprite.spritecollide(self.player.sprite, self.coins_sprites, True)
+        collided_coins: List[Coin] = pygame.sprite.spritecollide(self.player.sprite, self.coins_sprites, True)
         if collided_coins:
             for coin in collided_coins:
-                self.change_coins(1)
+                self.change_coins(coin.value)

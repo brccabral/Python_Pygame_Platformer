@@ -41,11 +41,12 @@ class AnimatedTile(Tile):
         self.animate()
 
 class Coin(AnimatedTile):
-    def __init__(self, pos, size, path) -> None:
+    def __init__(self, pos, size, path, value) -> None:
         super().__init__(pos, size, path)
         cx = pos[0] + size // 2
         cy = pos[1] + size // 2
         self.rect = self.image.get_rect(center = (cx, cy))
+        self.value = value
 
 class Palm(AnimatedTile):
     def __init__(self, pos, size, path, offset) -> None:
