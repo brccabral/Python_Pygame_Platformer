@@ -168,6 +168,11 @@ class Level:
         # level tiles
         self.bg_palms_sprites.update(self.world_shift)
         self.bg_palms_sprites.draw(self.display_surface)
+        
+        # dust particles
+        self.dust_sprite.update(self.world_shift)
+        self.dust_sprite.draw(self.display_surface)
+
         self.terrain_sprites.update(self.world_shift)
         self.terrain_sprites.draw(self.display_surface)
         self.crates_sprites.update(self.world_shift)
@@ -197,10 +202,6 @@ class Level:
         self.goal.draw(self.display_surface)
         self.check_coin_collisions()
         self.check_enemy_collisions()
-
-        # dust particles
-        self.dust_sprite.update(self.world_shift)
-        self.dust_sprite.draw(self.display_surface)
 
         self.water.draw(self.display_surface, self.world_shift)
 
