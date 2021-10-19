@@ -4,6 +4,7 @@ from overworld import Overworld
 from settings import *
 from level import Level
 from support import resource_path
+from ui import UI
 
 class Game:
     def __init__(self) -> None:
@@ -13,6 +14,9 @@ class Game:
         self.max_health = 100
         self.cur_health = 100
         self.coin = 0
+
+        # user interface
+        self.ui = UI(screen)
     
     def create_level(self, current_level):
         self.level = Level(current_level, screen, self.create_overworld)
@@ -30,6 +34,8 @@ class Game:
             self.overworld.run()
         else:
             self.level.run()
+            self.ui.show_health(50, 100)
+            self.ui.show_coins(4)
 
 pygame.init()
 screen = pygame.display.set_mode((screen_width, screen_height))

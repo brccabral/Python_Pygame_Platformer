@@ -13,7 +13,7 @@ class UI:
         self.coin = pygame.image.load(resource_path('assets/graphics/ui/coin.png')).convert_alpha()
     
     def show_health(self, current, full):
-        pass
+        self.display_surface.blit(self.health_bar, (20,10))
 
     def show_coins(self, amount):
         pass
