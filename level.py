@@ -31,8 +31,6 @@ class Level:
         # terrain setup
         terrain_layout = import_csv_layout(level_data['terrain'])
         self.terrain_sprites: pygame.sprite.Group = self.create_tile_group(terrain_layout, 'terrain')
-        self.tiles = pygame.sprite.Group()
-        # self.setup_level_X(level_data)
 
         # grass setup
         grass_layout = import_csv_layout(level_data['grass'])
@@ -137,18 +135,6 @@ class Level:
                     sprite_group.add(sprite)
         return sprite_group
 
-    def setup_level_X(self, layout):
-
-        for row_index, row in enumerate(layout):
-            for column_index, cell in enumerate(row):
-                x = column_index * tile_size
-                y = row_index * tile_size
-                if cell == 'X':
-                    tile = Tile((x,y), tile_size)
-                    self.tiles.add(tile)
-                if cell == 'P':
-                    self.player.sprite.rect.bottomleft = (x,y)
-
     def scroll_x(self):
         player: Player = self.player.sprite
         player_x = player.rect.centerx
@@ -180,8 +166,6 @@ class Level:
         self.display_surface.blit(self.text_surface, self.text_rect)
 
         # level tiles
-        self.tiles.update(self.world_shift)
-        self.tiles.draw(self.display_surface)
         self.bg_palms_sprites.update(self.world_shift)
         self.bg_palms_sprites.draw(self.display_surface)
         self.terrain_sprites.update(self.world_shift)
