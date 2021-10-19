@@ -10,7 +10,7 @@ from typing import Callable, List
 from game_data import levels
 
 class Level:
-    def __init__(self, current_level: int, surface: pygame.Surface, create_overworld: Callable) -> None:
+    def __init__(self, current_level: int, surface: pygame.Surface, create_overworld: Callable, change_coins: Callable) -> None:
 
         # general setup
         self.display_surface = surface
@@ -80,6 +80,9 @@ class Level:
         level_width = len(terrain_layout[0]) * tile_size
         self.water = Water(screen_height - 20, level_width)
         self.clouds = Clouds(400, level_width, 20)
+
+        # ui
+        self.change_coins = change_coins
     
     def player_setup(self, layout):
         for row_index, row in enumerate(layout):
@@ -204,6 +207,7 @@ class Level:
         self.player.draw(self.display_surface)
         self.goal.update(self.world_shift)
         self.goal.draw(self.display_surface)
+        self.check_coin_collisions()
 
         # dust particles
         self.dust_sprite.update(self.world_shift)
@@ -300,3 +304,9 @@ class Level:
                 offset = pygame.math.Vector2(-10,15)
             fall_dust_particle = ParticleEffect(self.player.sprite.rect.midbottom - offset, 'land')
             self.dust_sprite.add(fall_dust_particle)
+    
+    def check_coin_collisions(self):
+        collided_coins = pygame.sprite.spritecollide(self.player.sprite, self.coins_sprites, True)
+        if collided_coins:
+            for coin in collided_coins:
+                self.change_coins(1)
