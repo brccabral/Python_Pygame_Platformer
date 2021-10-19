@@ -1,6 +1,6 @@
 from typing import Callable, List
 import pygame
-from support import import_folder
+from support import import_folder, resource_path
 from math import sin
 
 class Player(pygame.sprite.Sprite):
@@ -37,6 +37,10 @@ class Player(pygame.sprite.Sprite):
         self.dust_frame_index = 0
         self.dust_animation_speed = 0.15
         self.create_jump_particles = create_jump_particles
+
+        # audio
+        self.jump_sound = pygame.mixer.Sound(resource_path('assets/audio/effects/jump.wav'))
+        self.hit_sound = pygame.mixer.Sound(resource_path('assets/audio/effects/hit.wav'))
 
     def import_character_assets(self):
         character_path = 'assets/graphics/character/'
@@ -95,6 +99,7 @@ class Player(pygame.sprite.Sprite):
             self.change_health(-10)
             self.invincible = True
             self.hurt_time = pygame.time.get_ticks()
+            self.hit_sound.play()
     
     def invincibility_timer(self):
         if self.invincible:
@@ -143,6 +148,7 @@ class Player(pygame.sprite.Sprite):
     
     def jump(self):
         self.direction.y = self.jump_speed
+        self.jump_sound.play()
 
     def update(self):
         self.get_status()
