@@ -10,6 +10,9 @@ class Game:
         self.max_level = 0
         self.overworld = Overworld(0, self.max_level, screen, self.create_level)
         self.status = 'overworld'
+        self.max_health = 100
+        self.cur_health = 100
+        self.coin = 0
     
     def create_level(self, current_level):
         self.level = Level(current_level, screen, self.create_overworld)
