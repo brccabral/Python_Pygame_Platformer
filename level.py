@@ -75,6 +75,9 @@ class Level:
         self.dust_sprite = pygame.sprite.GroupSingle()
         self.player_on_ground = False
 
+        # explosion particles
+        self.explosion_sprites = pygame.sprite.Group()
+
         # decoration
         self.sky = Sky(8)
         level_width = len(terrain_layout[0]) * tile_size
@@ -184,12 +187,14 @@ class Level:
         self.bg_palms_sprites.draw(self.display_surface)
         self.terrain_sprites.update(self.world_shift)
         self.terrain_sprites.draw(self.display_surface)
+        self.crates_sprites.update(self.world_shift)
+        self.crates_sprites.draw(self.display_surface)
         self.enemies_sprites.update(self.world_shift)
         self.enemies_sprites.draw(self.display_surface)
         self.constraints_sprites.update(self.world_shift) # don't draw constraints
         self.enemy_constraint_collision()
-        self.crates_sprites.update(self.world_shift)
-        self.crates_sprites.draw(self.display_surface)
+        self.explosion_sprites.update(self.world_shift)
+        self.explosion_sprites.draw(self.display_surface)
         self.grass_sprites.update(self.world_shift)
         self.grass_sprites.draw(self.display_surface)
         self.coins_sprites.update(self.world_shift)
@@ -322,6 +327,8 @@ class Level:
                 player_bottom = self.player.sprite.rect.bottom
                 if enemy_top < player_bottom < enemy_center and self.player.sprite.direction.y > 0:
                     self.player.sprite.direction.y = -15
+                    explosion_sprite = ParticleEffect(enemy.rect.center, 'explosion')
+                    self.explosion_sprites.add(explosion_sprite)
                     enemy.kill()
 
 
