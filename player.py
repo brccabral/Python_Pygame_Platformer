@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, List
 import pygame
 from support import import_folder
 from math import sin
@@ -18,14 +18,13 @@ class Player(pygame.sprite.Sprite):
         self.speed = 8
         self.gravity = 1
         self.jump_speed = -25
+        # separate sword pixels from collision rectangle
+        self.collision_rect = pygame.Rect(self.rect.topleft, (50, self.rect.height))
 
         # player status
         self.status = 'idle'
         self.facing_right = True
         self.on_ground = True
-        self.on_ceiling = False
-        self.on_left = False
-        self.on_right = False
 
         # health management
         self.change_health = change_health
@@ -41,7 +40,7 @@ class Player(pygame.sprite.Sprite):
 
     def import_character_assets(self):
         character_path = 'assets/graphics/character/'
-        self.animations = {'idle':[], 'run':[], 'jump':[], 'fall':[]}
+        self.animations: dict[str, List[pygame.Surface]] = {'idle':[], 'run':[], 'jump':[], 'fall':[]}
 
         for animation in self.animations.keys():
             full_path = character_path + animation
@@ -61,9 +60,11 @@ class Player(pygame.sprite.Sprite):
         image = animation[int(self.frame_index)]
         if self.facing_right:
             self.image = image
+            self.rect.bottomleft = self.collision_rect.bottomleft
         else:
             flipped_image = pygame.transform.flip(image, True, False)
             self.image = flipped_image
+            self.rect.bottomright = self.collision_rect.bottomright
         
         if self.invincible:
             alpha = self.wave_value()
@@ -71,20 +72,7 @@ class Player(pygame.sprite.Sprite):
         else:
             self.image.set_alpha(255)
         
-        # set the rect
-        # avoid image offset pixels due to different image sizes for the animation
-        if self.on_ground and self.on_right:
-            self.rect = self.image.get_rect(bottomright = self.rect.bottomright)
-        elif self.on_ground and self.on_left:
-            self.rect = self.image.get_rect(bottomleft = self.rect.bottomleft)
-        elif self.on_ground:
-            self.rect = self.image.get_rect(midbottom = self.rect.midbottom)
-        elif self.on_ceiling and self.on_right:
-            self.rect = self.image.get_rect(topright = self.rect.topright)
-        elif self.on_ceiling and self.on_left:
-            self.rect = self.image.get_rect(topleft = self.rect.topleft)
-        elif self.on_ceiling:
-            self.rect = self.image.get_rect(midtop = self.rect.midtop)
+        
 
     def run_dust_animation(self):
         if self.status == 'run' and self.on_ground:
@@ -119,7 +107,6 @@ class Player(pygame.sprite.Sprite):
         if value >= 0 : return 255
         else: return 0
 
-
     def get_input(self):
         keys = pygame.key.get_pressed()
 
@@ -152,7 +139,7 @@ class Player(pygame.sprite.Sprite):
         # contantly updates direction.y to get acceleration sensation
         self.direction.y += self.gravity
         # here we change the player position
-        self.rect.y += self.direction.y
+        self.collision_rect.y += self.direction.y
     
     def jump(self):
         self.direction.y = self.jump_speed

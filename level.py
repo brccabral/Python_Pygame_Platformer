@@ -16,7 +16,6 @@ class Level:
         self.display_surface = surface
         self.current_level = current_level
         self.world_shift = 0
-        self.current_x = 0
 
         # level setup
         level_data = levels[current_level]
@@ -228,27 +227,17 @@ class Level:
 
     def horizontal_movement_collision(self):
         player: Player = self.player.sprite
-        player.rect.x += player.direction.x * player.speed
+        player.collision_rect.x += player.direction.x * player.speed
 
         collidable_sprites = self.terrain_sprites.sprites() + self.crates_sprites.sprites() + self.fg_palms_sprites.sprites()
         for sprite in collidable_sprites:
-            if sprite.rect.colliderect(player.rect):
+            if sprite.rect.colliderect(player.collision_rect):
                 if player.direction.x < 0:
-                    player.rect.left = sprite.rect.right
-                    player.on_right = True
-                    self.current_x = sprite.rect.right
+                    player.collision_rect.left = sprite.rect.right
                     player.direction.x = 0
                 elif player.direction.x > 0:
-                    player.rect.right = sprite.rect.left
-                    player.on_left = True
-                    self.current_x = sprite.rect.left
+                    player.collision_rect.right = sprite.rect.left
                     player.direction.x = 0
-        
-        # avoid image offset pixels due to different image sizes for the animation
-        if player.on_left and (player.rect.left < self.current_x or player.direction.x >= 0):
-            player.on_left = False
-        if player.on_right and(player.rect.right > self.current_x or player.direction.x <= 0):
-            player.on_right = False
     
     def vertical_movement_collision(self):
         player: Player = self.player.sprite
@@ -256,22 +245,19 @@ class Level:
 
         collidable_sprites = self.terrain_sprites.sprites() + self.crates_sprites.sprites() + self.fg_palms_sprites.sprites()
         for sprite in collidable_sprites:
-            if sprite.rect.colliderect(player.rect):
+            if sprite.rect.colliderect(player.collision_rect):
                 if player.direction.y < 0:
-                    player.rect.top = sprite.rect.bottom
+                    player.collision_rect.top = sprite.rect.bottom
                     # if player touches ceiling, stops player's jump
                     player.direction.y = 0
-                    player.on_ceiling = True
                 elif player.direction.y > 0:
-                    player.rect.bottom = sprite.rect.top
+                    player.collision_rect.bottom = sprite.rect.top
                     # prevent from crossing the tile if player keeps standing on it
                     player.direction.y = 0
                     player.on_ground = True
 
         if player.on_ground and (player.direction.y < 0 or player.direction.y > player.gravity):
             player.on_ground = False
-        if player.on_ceiling and player.direction.y > 0:
-            player.on_ceiling = False
 
     def enemy_constraint_collision(self):
         enemy: Enemy
