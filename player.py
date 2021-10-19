@@ -29,6 +29,8 @@ class Player(pygame.sprite.Sprite):
         # health management
         self.change_health = change_health
         self.invincible = False
+        self.invincibility_duration = 500
+        self.hurt_time = 0
 
         # dust particles
         self.import_dust_run_particles()
@@ -97,6 +99,14 @@ class Player(pygame.sprite.Sprite):
         if not self.invincible:
             self.change_health(-10)
             self.invincible = True
+            self.hurt_time = pygame.time.get_ticks()
+    
+    def invincibility_timer(self):
+        if self.invincible:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.hurt_time >= self.invincibility_duration:
+                self.invincible = False
+            
 
     def get_input(self):
         keys = pygame.key.get_pressed()
@@ -140,3 +150,4 @@ class Player(pygame.sprite.Sprite):
         self.animate()
         self.run_dust_animation()
         self.get_input()
+        self.invincibility_timer()
