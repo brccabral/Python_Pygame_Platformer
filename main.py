@@ -54,6 +54,8 @@ class Game:
             self.max_level = 0
             self.overworld = Overworld(0, self.max_level, screen, self.create_level)
             self.status = 'overworld'
+            self.level_bg_music.stop()
+            self.overworld_bg_music.play(loops=-1)
 
     def run(self):
         if self.status == 'overworld':
