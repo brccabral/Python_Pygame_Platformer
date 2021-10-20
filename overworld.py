@@ -1,7 +1,7 @@
 from typing import Callable
 import pygame
 from game_data import levels
-from support import import_folder
+from support import import_folder, resource_path
 from decoration import Sky
 
 class Overworld:
@@ -134,7 +134,7 @@ class Icon(pygame.sprite.Sprite):
     def __init__(self, pos) -> None:
         super().__init__()
         self.pos = pos
-        self.image = pygame.image.load('assets/graphics/overworld/hat.png').convert_alpha()
+        self.image = pygame.image.load(resource_path('assets/graphics/overworld/hat.png')).convert_alpha()
         self.rect = self.image.get_rect(center = pos)
     
     def update(self):

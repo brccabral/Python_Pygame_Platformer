@@ -14,6 +14,7 @@ def resource_path(relative):
     return join(relative)
 
 def import_folder(path) -> List[pygame.Surface]:
+    path = resource_path(path)
     surface_list = []
     
     for _,__,img_files in walk(path):
@@ -25,6 +26,7 @@ def import_folder(path) -> List[pygame.Surface]:
     return surface_list
 
 def import_csv_layout(path):
+    path = resource_path(path)
     terrain_map = []
     with open(path) as map:
         level = reader(map, delimiter=',')
@@ -33,6 +35,7 @@ def import_csv_layout(path):
     return terrain_map
 
 def import_cut_graphics(path):
+    path = resource_path(path)
     surface = pygame.image.load(resource_path(path)).convert_alpha()
     tile_num_x = surface.get_width()//tile_size
     tile_num_y = surface.get_height()//tile_size
