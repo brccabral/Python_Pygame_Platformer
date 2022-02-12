@@ -173,7 +173,7 @@ class Level:
                                                    self.visible_sprites])
 
     def scroll_x(self):
-        player: Player = self.player.sprite
+        player: Player = self.player
         player_x = player.rect.centerx
         direction_x = player.direction.x
 
@@ -222,7 +222,7 @@ class Level:
         # self.check_win()
 
     def horizontal_movement_collision(self):
-        player: Player = self.player.sprite
+        player: Player = self.player
         player.collision_rect.x += player.direction.x * player.speed
 
         collidable_sprites = self.terrain_sprites.sprites(
@@ -237,7 +237,7 @@ class Level:
                     player.direction.x = 0
 
     def vertical_movement_collision(self):
-        player: Player = self.player.sprite
+        player: Player = self.player
         player.apply_gravity()
 
         collidable_sprites = self.terrain_sprites.sprites(
@@ -264,15 +264,15 @@ class Level:
                 enemy.reverse()
 
     def check_death(self):
-        if self.player.sprite.rect.top > screen_height:
+        if self.player.rect.top > screen_height:
             self.create_overworld(self.current_level, 0)
 
     def check_win(self):
-        if pygame.sprite.spritecollide(self.player.sprite, self.goal, False):
+        if pygame.sprite.spritecollide(self.player, self.goal, False):
             self.create_overworld(self.current_level, self.new_max_level)
 
     def create_jump_particles(self, pos):
-        if self.player.sprite.facing_right:
+        if self.player.facing_right:
             pos -= pygame.math.Vector2(15, 5)
         else:
             pos += pygame.math.Vector2(-5, 5)
@@ -283,22 +283,22 @@ class Level:
         # save the on_ground state before the vertical collision
         # if there is a collision after, it means the player
         # was on the air
-        self.player_on_ground = self.player.sprite.on_ground
+        self.player_on_ground = self.player.on_ground
 
     def create_landing_dust(self):
         # check if player was on the air before the vertical collision
-        if not self.player_on_ground and self.player.sprite.on_ground and not self.dust_sprite.sprites():
-            if self.player.sprite.facing_right:
+        if not self.player_on_ground and self.player.on_ground and not self.dust_sprite.sprites():
+            if self.player.facing_right:
                 offset = pygame.math.Vector2(10, 15)
             else:
                 offset = pygame.math.Vector2(-10, 15)
             fall_dust_particle = ParticleEffect(
-                self.player.sprite.rect.midbottom - offset, 'land')
+                self.player.rect.midbottom - offset, 'land')
             self.dust_sprite.add(fall_dust_particle)
 
     def check_coin_collisions(self):
         collided_coins: List[Coin] = pygame.sprite.spritecollide(
-            self.player.sprite, self.coins_sprites, True)
+            self.player, self.coins_sprites, True)
         if collided_coins:
             self.coin_sound.play()
             for coin in collided_coins:
@@ -306,22 +306,22 @@ class Level:
 
     def check_enemy_collisions(self):
         enemy_collisions: List[Enemy] = pygame.sprite.spritecollide(
-            self.player.sprite, self.enemies_sprites, False)
+            self.player, self.enemies_sprites, False)
 
         if enemy_collisions:
             for enemy in enemy_collisions:
                 enemy_center = enemy.rect.centery
                 enemy_top = enemy.rect.top
-                player_bottom = self.player.sprite.rect.bottom
-                if enemy_top < player_bottom < enemy_center and self.player.sprite.direction.y > 0:
+                player_bottom = self.player.rect.bottom
+                if enemy_top < player_bottom < enemy_center and self.player.direction.y > 0:
                     self.stomp_sound.play()
-                    self.player.sprite.direction.y = -15
+                    self.player.direction.y = -15
                     explosion_sprite = ParticleEffect(
                         enemy.rect.center, 'explosion')
                     self.explosion_sprites.add(explosion_sprite)
                     enemy.kill()
                 else:
-                    self.player.sprite.get_damage()
+                    self.player.get_damage()
 
 
 class CameraGroup(pygame.sprite.Group):
