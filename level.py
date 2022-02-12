@@ -84,7 +84,7 @@ class Level:
 
         # player setup
         player_layout = import_csv_layout(level_data['player'])
-        self.create_tile_group(player_layout, 'player', change_health)
+        self.goal = self.create_tile_group(player_layout, 'player', change_health)
 
         # explosion particles
         self.explosion_sprites = pygame.sprite.Group()
@@ -156,8 +156,9 @@ class Level:
                         if cell == '1':
                             hat_surface = pygame.image.load(resource_path(
                                 'assets/graphics/character/hat.png')).convert_alpha()
-                            self.goal = StaticTile((x, y), TILE_SIZE, hat_surface, [
+                            sprite = StaticTile((x, y), TILE_SIZE, hat_surface, [
                                                    self.visible_sprites])
+                            sprite_group.add(sprite)
         return sprite_group
 
     def input(self):
@@ -186,7 +187,7 @@ class Level:
         # self.scroll_x()
 
         # self.check_death()
-        # self.check_win()
+        self.check_win()
 
     def check_death(self):
         if self.player.rect.top > SCREEN_HEIGHT:
