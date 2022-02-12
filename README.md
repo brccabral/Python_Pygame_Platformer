@@ -15,3 +15,5 @@ The game is easy, but creating new levels is very simple.
 - https://www.youtube.com/watch?v=4jdJhUfMycQ
 6. Fix collision bugs, add sounds
 - https://www.youtube.com/watch?v=hEL3wO-EOZg
+7. Better Sprites display and collisions
+- https://www.youtube.com/watch?v=Gmrf_3LbXu0
