@@ -38,8 +38,22 @@ class Level:
         self.text_rect = self.text_surface.get_rect(
             center=(screen_width//2, 20))
 
-        # terrain setup
+        # background need to be added first
+        # background palms setup
+        bg_palms_layout = import_csv_layout(level_data['bg_palms'])
+        self.create_tile_group(bg_palms_layout, 'bg_palms')
+
+        # terrain_layout is needed to calculate decoration positions
         terrain_layout = import_csv_layout(level_data['terrain'])
+
+        # decoration
+        self.sky = Sky(8)
+        level_width = len(terrain_layout[0]) * tile_size
+        self.water = Water(screen_height - 20, level_width,
+                           [self.visible_sprites])
+        self.clouds = Clouds(400, level_width, 20, [self.visible_sprites])
+
+        # terrain setup
         self.create_tile_group(terrain_layout, 'terrain')
 
         # grass setup
@@ -57,10 +71,6 @@ class Level:
         # foreground palms setup
         fg_palms_layout = import_csv_layout(level_data['fg_palms'])
         self.create_tile_group(fg_palms_layout, 'fg_palms')
-
-        # background palms setup
-        bg_palms_layout = import_csv_layout(level_data['bg_palms'])
-        self.create_tile_group(bg_palms_layout, 'bg_palms')
 
         # enemy setup
         enemies_layout = import_csv_layout(level_data['enemies'])
@@ -82,13 +92,6 @@ class Level:
 
         # explosion particles
         self.explosion_sprites = pygame.sprite.Group()
-
-        # decoration
-        self.sky = Sky(8)
-        level_width = len(terrain_layout[0]) * tile_size
-        self.water = Water(screen_height - 20, level_width,
-                           [self.visible_sprites])
-        self.clouds = Clouds(400, level_width, 20, [self.visible_sprites])
 
         # ui
         self.change_coins = change_coins
