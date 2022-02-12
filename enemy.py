@@ -1,10 +1,11 @@
+from typing import List
 import pygame
 from tiles import AnimatedTile
 from random import randint
 
 class Enemy(AnimatedTile):
-    def __init__(self, pos, size) -> None:
-        super().__init__(pos, size, 'assets/graphics/enemy/run')
+    def __init__(self, pos, size, groups: List[pygame.sprite.Group]) -> None:
+        super().__init__(pos, size, 'assets/graphics/enemy/run', groups)
         self.rect.y += size - self.image.get_height()
         self.speed = randint(3,6)
 
@@ -23,3 +24,7 @@ class Enemy(AnimatedTile):
     
     def reverse(self):
         self.speed *= -1
+
+if __name__ == '__main__':
+    from main import main
+    main()

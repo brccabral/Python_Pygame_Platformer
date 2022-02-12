@@ -4,8 +4,15 @@ from support import import_folder, resource_path
 from math import sin
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, surface: pygame.Surface, create_jump_particles: Callable, change_health: Callable) -> None:
-        super().__init__()
+    def __init__(self, 
+                pos, 
+                surface: pygame.Surface, 
+                create_jump_particles: Callable, 
+                change_health: Callable,
+                groups: List[pygame.sprite.Group], 
+                collisions_sprites: pygame.sprite.Group
+                ) -> None:
+        super().__init__(groups)
         self.import_character_assets()
         self.frame_index = 0
         self.animation_speed = 0.15
@@ -20,6 +27,7 @@ class Player(pygame.sprite.Sprite):
         self.jump_speed = -25
         # separate sword pixels from collision rectangle
         self.collision_rect = pygame.Rect(self.rect.topleft, (50, self.rect.height))
+        self.collisions_sprites = collisions_sprites
 
         # player status
         self.status = 'idle'
@@ -157,3 +165,7 @@ class Player(pygame.sprite.Sprite):
         self.run_dust_animation()
         self.get_input()
         self.invincibility_timer()
+
+if __name__ == '__main__':
+    from main import main
+    main()

@@ -16,3 +16,11 @@ vertical_tile_number = 11
 tile_size = 64
 screen_width = 1200
 screen_height = tile_size * vertical_tile_number
+
+# camera
+CAMERA_BORDERS = {
+    'left': screen_width//4,
+    'right': screen_width//4,
+    'top': 100,
+    'bottom': 150
+}

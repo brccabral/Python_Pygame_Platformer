@@ -52,8 +52,6 @@ def import_cut_graphics(path):
     
     return cut_tiles
 
-
-if __name__ == "__main__":
-    pygame.init()
-    screen = pygame.display.set_mode((5, 5))
-    print(import_folder('assets/graphics/character/run'))
+if __name__ == '__main__':
+    from main import main
+    main()

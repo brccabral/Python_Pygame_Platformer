@@ -1,3 +1,4 @@
+from typing import List
 import pygame
 from support import import_folder, resource_path
 from settings import vertical_tile_number, tile_size, screen_width
@@ -53,38 +54,30 @@ class Sky:
 class Water:
     # the water needs to stretch more than the level width
     # both to the left and to the right
-    def __init__(self, top, level_width) -> None:
+    def __init__(self, top, level_width, groups: List[pygame.sprite.Group]) -> None:
         water_start = -screen_width
         water_tile_width = 192
         tile_x_amount = (level_width + screen_width) // water_tile_width
-        self.water_sprites = pygame.sprite.Group()
 
         for tile in range(tile_x_amount):
-            x = tile * water_tile_width+ water_start
+            x = tile * water_tile_width + water_start
             y = top
-            sprite = AnimatedTile((x,y), water_tile_width, 'assets/graphics/decoration/water')
-            self.water_sprites.add(sprite)
+            sprite = AnimatedTile((x,y), water_tile_width, 'assets/graphics/decoration/water', groups)
     
-    def draw(self, surface, shift):
-        self.water_sprites.update(shift)
-        self.water_sprites.draw(surface)
-
 class Clouds:
-    def __init__(self, horizon, level_width, cloud_number) -> None:
+    def __init__(self, horizon, level_width, cloud_number, groups: List[pygame.sprite.Group]) -> None:
         cloud_surface_list = import_folder('assets/graphics/decoration/clouds')
         min_x = -screen_width
         max_x = level_width + screen_width
         min_y = 0
         max_y = horizon
-        self.could_sprites = pygame.sprite.Group()
 
-        for cloud in range(cloud_number):
+        for _ in range(cloud_number):
             cloud_surface = choice(cloud_surface_list)
             x = randint(min_x, max_x)
             y = randint(min_y, max_y)
-            sprite = StaticTile((x,y), 0, cloud_surface)
-            self.could_sprites.add(sprite)
+            StaticTile((x,y), 0, cloud_surface, groups)
     
-    def draw(self, surface, shift):
-        self.could_sprites.update(shift)
-        self.could_sprites.draw(surface)
+if __name__ == '__main__':
+    from main import main
+    main()

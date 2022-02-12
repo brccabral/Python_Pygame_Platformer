@@ -31,3 +31,7 @@ class UI:
         coin_amount_surface = self.font.render(str(amount), False, '#33323d')
         coin_amount_rect = coin_amount_surface.get_rect(midleft = (self.coin_rect.right + 4, self.coin_rect.centery))
         self.display_surface.blit(coin_amount_surface, coin_amount_rect)
+
+if __name__ == '__main__':
+    from main import main
+    main()

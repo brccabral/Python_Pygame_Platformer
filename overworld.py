@@ -139,3 +139,8 @@ class Icon(pygame.sprite.Sprite):
     
     def update(self):
         self.rect.center = self.pos
+
+
+if __name__ == '__main__':
+    from main import main
+    main()

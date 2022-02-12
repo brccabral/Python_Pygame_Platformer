@@ -25,3 +25,7 @@ class ParticleEffect(pygame.sprite.Sprite):
     def update(self, x_shift):
         self.animate()
         self.rect.x += x_shift
+
+if __name__ == '__main__':
+    from main import main
+    main()
