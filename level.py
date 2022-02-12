@@ -85,12 +85,6 @@ class Level:
         # player setup
         player_layout = import_csv_layout(level_data['player'])
         self.create_tile_group(player_layout, 'player', change_health)
-        # self.player_setup(player_layout, change_health)
-
-        # dust
-        # it is single because we can't have jump and land at the same time
-        self.dust_sprite = pygame.sprite.GroupSingle()
-        self.player_on_ground = False
 
         # explosion particles
         self.explosion_sprites = pygame.sprite.Group()
@@ -181,7 +175,6 @@ class Level:
         self.visible_sprites.custom_draw(self.player)
 
         # player
-        # self.create_landing_dust() # this needs to be after vertical collision
         # self.check_coin_collisions()
         # self.check_enemy_collisions()
 
@@ -199,17 +192,6 @@ class Level:
     def check_win(self):
         if pygame.sprite.spritecollide(self.player, self.goal, False):
             self.create_overworld(self.current_level, self.new_max_level)
-
-    def create_landing_dust(self):
-        # check if player was on the air before the vertical collision
-        if not self.player_on_ground and self.player.on_floor and not self.dust_sprite.sprites():
-            if self.player.facing_right:
-                offset = pygame.math.Vector2(10, 15)
-            else:
-                offset = pygame.math.Vector2(-10, 15)
-            fall_dust_particle = ParticleEffect(
-                self.player.rect.midbottom - offset, 'land')
-            self.dust_sprite.add(fall_dust_particle)
 
     def check_coin_collisions(self):
         collided_coins: List[Coin] = pygame.sprite.spritecollide(

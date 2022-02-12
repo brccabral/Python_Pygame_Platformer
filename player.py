@@ -187,12 +187,24 @@ class Player(pygame.sprite.Sprite):
                 if self.direction.y > 0:
                     self.collision_rect.bottom = sprite.rect.top
                     self.direction.y = 0
+                    # create dust particles before set on_floor
+                    self.create_landing_dust()
                     self.on_floor = True
                 if self.direction.y < 0:
                     self.collision_rect.top = sprite.rect.bottom
                     self.direction.y = 0
         if self.on_floor and self.direction.y != 0:
             self.on_floor = False
+
+    def create_landing_dust(self):
+        # check if player was on the air before the vertical collision
+        if not self.on_floor:
+            if self.facing_right:
+                offset = pygame.math.Vector2(10, 15)
+            else:
+                offset = pygame.math.Vector2(-10, 15)
+            ParticleEffect(self.rect.midbottom -
+                           offset, 'land', self.groups())
 
     def run(self):
         self.get_input()
