@@ -4,7 +4,7 @@ from enemy import Enemy
 from particles import ParticleEffect
 from player import Player
 from tiles import Coin, Crate, Palm, StaticTile, Tile
-from settings import tile_size, screen_width, screen_height, CAMERA_BORDERS
+from settings import TILE_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT, CAMERA_BORDERS
 from support import import_csv_layout, import_cut_graphics, resource_path
 from typing import Callable, List
 from game_data import levels
@@ -38,22 +38,22 @@ class Level:
         self.font = pygame.font.Font(None, 40)
         self.text_surface = self.font.render(level_content, True, 'White')
         self.text_rect = self.text_surface.get_rect(
-            center=(screen_width//2, 20))
+            center=(SCREEN_WIDTH//2, 20))
 
-        # background need to be added first
-        # background palms setup
-        bg_palms_layout = import_csv_layout(level_data['bg_palms'])
-        self.create_tile_group(bg_palms_layout, 'bg_palms')
-
+        # anything in background need to be added first
         # terrain_layout is needed to calculate decoration positions
         terrain_layout = import_csv_layout(level_data['terrain'])
 
         # decoration
         self.sky = Sky(8)
-        level_width = len(terrain_layout[0]) * tile_size
-        self.water = Water(screen_height - 20, level_width,
+        level_width = len(terrain_layout[0]) * TILE_SIZE
+        self.water = Water(SCREEN_HEIGHT - 20, level_width,
                            [self.visible_sprites])
         self.clouds = Clouds(400, level_width, 20, [self.visible_sprites])
+
+        # background palms setup
+        bg_palms_layout = import_csv_layout(level_data['bg_palms'])
+        self.create_tile_group(bg_palms_layout, 'bg_palms')
 
         # terrain setup
         self.create_tile_group(terrain_layout, 'terrain')
@@ -126,41 +126,41 @@ class Level:
 
         for row_index, row in enumerate(layout):
             for column_index, cell in enumerate(row):
-                x = column_index * tile_size
-                y = row_index * tile_size
+                x = column_index * TILE_SIZE
+                y = row_index * TILE_SIZE
                 if cell != '-1':
                     if layout_type == 'terrain':
                         tile_surface = terrain_tile_list[int(cell)]
-                        StaticTile((x, y), tile_size, tile_surface, [
+                        StaticTile((x, y), TILE_SIZE, tile_surface, [
                                    self.visible_sprites, self.collision_sprites])
                     if layout_type == 'grass':
                         tile_surface = grass_tile_list[int(cell)]
-                        StaticTile((x, y), tile_size, tile_surface,
+                        StaticTile((x, y), TILE_SIZE, tile_surface,
                                    [self.visible_sprites])
                     if layout_type == 'crates':
-                        Crate((x, y), tile_size, [
+                        Crate((x, y), TILE_SIZE, [
                               self.visible_sprites, self.collision_sprites])
                     if layout_type == 'coins':
                         if cell == '0':
-                            Coin((x, y), tile_size, 'assets/graphics/coins/gold',
+                            Coin((x, y), TILE_SIZE, 'assets/graphics/coins/gold',
                                  5, [self.visible_sprites])
                         else:
                             Coin(
-                                (x, y), tile_size, 'assets/graphics/coins/silver', 1, [self.visible_sprites])
+                                (x, y), TILE_SIZE, 'assets/graphics/coins/silver', 1, [self.visible_sprites])
                     if layout_type == 'fg_palms':
                         if cell == '0':
-                            Palm((x, y), tile_size, 'assets/graphics/terrain/palm_small',
+                            Palm((x, y), TILE_SIZE, 'assets/graphics/terrain/palm_small',
                                  38, [self.visible_sprites, self.collision_sprites])
                         if cell == '1':
-                            Palm((x, y), tile_size, 'assets/graphics/terrain/palm_large',
+                            Palm((x, y), TILE_SIZE, 'assets/graphics/terrain/palm_large',
                                  64, [self.visible_sprites, self.collision_sprites])
                     if layout_type == 'bg_palms':
-                        Palm((x, y), tile_size, 'assets/graphics/terrain/palm_bg',
+                        Palm((x, y), TILE_SIZE, 'assets/graphics/terrain/palm_bg',
                              64, [self.visible_sprites])
                     if layout_type == 'enemies':
-                        Enemy((x, y), tile_size, [self.visible_sprites, self.active_sprites], self.enemy_constrains)
+                        Enemy((x, y), TILE_SIZE, [self.visible_sprites, self.active_sprites], self.enemy_constrains)
                     if layout_type == 'constraints':
-                        Tile((x, y), tile_size, [self.enemy_constrains])
+                        Tile((x, y), TILE_SIZE, [self.enemy_constrains])
                     if layout_type == 'player':
                         if cell == '0':
                             self.player = Player((x, y),
@@ -174,7 +174,7 @@ class Level:
                         if cell == '1':
                             hat_surface = pygame.image.load(resource_path(
                                 'assets/graphics/character/hat.png')).convert_alpha()
-                            self.goal = StaticTile((x, y), tile_size, hat_surface, [
+                            self.goal = StaticTile((x, y), TILE_SIZE, hat_surface, [
                                                    self.visible_sprites])
 
     def input(self):
@@ -212,7 +212,7 @@ class Level:
         # self.check_win()
 
     def check_death(self):
-        if self.player.rect.top > screen_height:
+        if self.player.rect.top > SCREEN_HEIGHT:
             self.create_overworld(self.current_level, 0)
 
     def check_win(self):

@@ -12,15 +12,15 @@ level_map = [
     'XXXXXXXX  XXXXXX  XX  XXXX  ',
 ]
 
-vertical_tile_number = 11
-tile_size = 64
-screen_width = 1200
-screen_height = tile_size * vertical_tile_number
+VERTICAL_TILE_NUMBER = 11
+TILE_SIZE = 64
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = TILE_SIZE * VERTICAL_TILE_NUMBER
 
 # camera
 CAMERA_BORDERS = {
-    'left': screen_width//4,
-    'right': screen_width//4,
+    'left': SCREEN_WIDTH//4,
+    'right': SCREEN_WIDTH//4,
     'top': 100,
     'bottom': 150
 }
