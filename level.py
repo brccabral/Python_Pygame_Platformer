@@ -103,19 +103,6 @@ class Level:
         self.stomp_sound = pygame.mixer.Sound(
             resource_path('assets/audio/effects/stomp.wav'))
 
-    # def player_setup(self, layout: list, change_health: Callable):
-    #     for row_index, row in enumerate(layout):
-    #         for column_index, cell in enumerate(row):
-    #             x = column_index * tile_size
-    #             y = row_index * tile_size
-    #             if cell == '0':
-    #                 sprite = Player((x,y), self.display_surface, self.create_jump_particles, change_health)
-    #                 self.player.add(sprite)
-    #             if cell == '1':
-    #                 hat_surface = pygame.image.load(resource_path('assets/graphics/character/hat.png')).convert_alpha()
-    #                 sprite = StaticTile((x,y), tile_size, hat_surface)
-    #                 self.goal.add(sprite)
-
     def create_tile_group(self, layout: List, layout_type: str, change_health: Callable = None):
         if layout_type == 'terrain':
             terrain_tile_list = import_cut_graphics(
@@ -165,7 +152,6 @@ class Level:
                         if cell == '0':
                             self.player = Player((x, y),
                                                  self.display_surface,
-                                                 self.create_jump_particles,
                                                  change_health,
                                                  [self.visible_sprites,
                                                      self.active_sprites],
@@ -194,12 +180,7 @@ class Level:
         self.active_sprites.run()
         self.visible_sprites.custom_draw(self.player)
 
-        # self.enemy_constraint_collision()
-
         # player
-        # self.horizontal_movement_collision()
-        # self.get_player_on_ground() # this needs to be before vertical collision
-        # self.vertical_movement_collision()
         # self.create_landing_dust() # this needs to be after vertical collision
         # self.check_coin_collisions()
         # self.check_enemy_collisions()
@@ -218,19 +199,6 @@ class Level:
     def check_win(self):
         if pygame.sprite.spritecollide(self.player, self.goal, False):
             self.create_overworld(self.current_level, self.new_max_level)
-
-    def create_jump_particles(self, pos):
-        if self.player.facing_right:
-            pos -= pygame.math.Vector2(15, 5)
-        else:
-            pos += pygame.math.Vector2(-5, 5)
-        jump_particle_sprite = ParticleEffect(pos, 'jump', [self.visible_sprites, self.active_sprites])
-
-    def get_player_on_ground(self):
-        # save the on_ground state before the vertical collision
-        # if there is a collision after, it means the player
-        # was on the air
-        self.player_on_ground = self.player.on_floor
 
     def create_landing_dust(self):
         # check if player was on the air before the vertical collision

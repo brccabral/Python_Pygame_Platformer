@@ -1,5 +1,6 @@
 from typing import Callable, List
 import pygame
+from particles import ParticleEffect
 from support import import_folder, resource_path
 from math import sin
 
@@ -8,7 +9,6 @@ class Player(pygame.sprite.Sprite):
     def __init__(self,
                  pos,
                  surface: pygame.Surface,
-                 create_jump_particles: Callable,
                  change_health: Callable,
                  groups: List[pygame.sprite.Group],
                  collisions_sprites: pygame.sprite.Group
@@ -46,7 +46,6 @@ class Player(pygame.sprite.Sprite):
         self.import_dust_run_particles()
         self.dust_frame_index = 0
         self.dust_animation_speed = 0.15
-        self.create_jump_particles = create_jump_particles
 
         # audio
         self.jump_sound = pygame.mixer.Sound(
@@ -145,7 +144,6 @@ class Player(pygame.sprite.Sprite):
         # player jumps only if on the ground
         if keys[pygame.K_SPACE] and self.on_floor:
             self.jump()
-            self.create_jump_particles(self.collision_rect.center)
 
     def get_status(self):
         if self.direction.y < 0:
@@ -167,6 +165,12 @@ class Player(pygame.sprite.Sprite):
     def jump(self):
         self.direction.y = self.jump_speed
         self.jump_sound.play()
+        pos = self.rect.midbottom
+        if self.facing_right:
+            pos -= pygame.math.Vector2(15, 5)
+        else:
+            pos += pygame.math.Vector2(5, 5)
+        ParticleEffect(pos, 'jump', self.groups())
 
     def horizontal_collisions(self):
         self.collision_rect.x += self.direction.x * self.speed
