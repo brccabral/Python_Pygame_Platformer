@@ -1,10 +1,11 @@
+from typing import List
 import pygame
 from support import import_folder
 
 
 class ParticleEffect(pygame.sprite.Sprite):
-    def __init__(self, pos, particle_type) -> None:
-        super().__init__()
+    def __init__(self, pos, particle_type, groups: List[pygame.sprite.Group]) -> None:
+        super().__init__(groups)
         self.frame_index = 0
         self.animation_speed = 0.5
         if particle_type == 'jump':
@@ -25,9 +26,8 @@ class ParticleEffect(pygame.sprite.Sprite):
         else:
             self.image = self.frames[int(self.frame_index)]
 
-    def update(self, x_shift):
+    def run(self):
         self.animate()
-        self.rect.x += x_shift
 
 
 if __name__ == '__main__':

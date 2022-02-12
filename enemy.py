@@ -18,8 +18,7 @@ class Enemy(AnimatedTile):
             self.image = pygame.transform.flip(
                 self.image, flip_x=True, flip_y=False)
 
-    def update(self, x_shift):
-        super().update(x_shift)
+    def run(self):
         self.animate()
         self.move()
         self.reverse_image()

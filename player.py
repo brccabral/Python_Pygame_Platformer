@@ -145,7 +145,7 @@ class Player(pygame.sprite.Sprite):
         # player jumps only if on the ground
         if keys[pygame.K_SPACE] and self.on_floor:
             self.jump()
-            self.create_jump_particles(self.rect.midbottom)
+            self.create_jump_particles(self.collision_rect.center)
 
     def get_status(self):
         if self.direction.y < 0:
@@ -190,7 +190,7 @@ class Player(pygame.sprite.Sprite):
         if self.on_floor and self.direction.y != 0:
             self.on_floor = False
 
-    def update(self):
+    def run(self):
         self.get_input()
         # self.get_status()
         self.animate()

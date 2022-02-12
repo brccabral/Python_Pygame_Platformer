@@ -22,7 +22,7 @@ class Level:
         # sprites in this group will be diplayed, other won't
         self.visible_sprites = CameraGroup()
         # sprites in this group will be updated, others will remain static
-        self.active_sprites = pygame.sprite.Group()
+        self.active_sprites = ActiveGroup()
         # sprites in this group will collide with player
         self.collision_sprites = pygame.sprite.Group()
 
@@ -156,7 +156,7 @@ class Level:
                         Palm((x, y), tile_size, 'assets/graphics/terrain/palm_bg',
                              64, [self.visible_sprites])
                     if layout_type == 'enemies':
-                        Enemy((x, y), tile_size, [self.visible_sprites])
+                        Enemy((x, y), tile_size, [self.visible_sprites, self.active_sprites])
                     if layout_type == 'constraints':
                         Tile((x, y), tile_size, [self.collision_sprites])
                     if layout_type == 'player':
@@ -204,7 +204,7 @@ class Level:
         self.sky.draw(self.display_surface)
         self.display_surface.blit(self.text_surface, self.text_rect)
 
-        self.active_sprites.update()
+        self.active_sprites.run()
         self.visible_sprites.custom_draw(self.player)
 
         # self.enemy_constraint_collision()
@@ -223,41 +223,6 @@ class Level:
 
         # self.check_death()
         # self.check_win()
-
-    def horizontal_movement_collision(self):
-        player: Player = self.player
-        player.collision_rect.x += player.direction.x * player.speed
-
-        collidable_sprites = self.terrain_sprites.sprites(
-        ) + self.crates_sprites.sprites() + self.fg_palms_sprites.sprites()
-        for sprite in collidable_sprites:
-            if sprite.rect.colliderect(player.collision_rect):
-                if player.direction.x < 0:
-                    player.collision_rect.left = sprite.rect.right
-                    player.direction.x = 0
-                elif player.direction.x > 0:
-                    player.collision_rect.right = sprite.rect.left
-                    player.direction.x = 0
-
-    def vertical_movement_collision(self):
-        player: Player = self.player
-
-        collidable_sprites = self.terrain_sprites.sprites(
-        ) + self.crates_sprites.sprites() + self.fg_palms_sprites.sprites()
-        for sprite in collidable_sprites:
-            if sprite.rect.colliderect(player.collision_rect):
-                if player.direction.y < 0:
-                    player.collision_rect.top = sprite.rect.bottom
-                    # if player touches ceiling, stops player's jump
-                    player.direction.y = 0
-                elif player.direction.y > 0:
-                    player.collision_rect.bottom = sprite.rect.top
-                    # prevent from crossing the tile if player keeps standing on it
-                    player.direction.y = 0
-                    player.on_floor = True
-
-        if player.on_floor and (player.direction.y < 0 or player.direction.y > player.gravity):
-            player.on_floor = False
 
     def enemy_constraint_collision(self):
         enemy: Enemy
@@ -278,8 +243,7 @@ class Level:
             pos -= pygame.math.Vector2(15, 5)
         else:
             pos += pygame.math.Vector2(-5, 5)
-        jump_particle_sprite = ParticleEffect(pos, 'jump')
-        self.dust_sprite.add(jump_particle_sprite)
+        jump_particle_sprite = ParticleEffect(pos, 'jump', [self.visible_sprites, self.active_sprites])
 
     def get_player_on_ground(self):
         # save the on_ground state before the vertical collision
@@ -381,6 +345,13 @@ class CameraGroup(pygame.sprite.Group):
             offset_pos = sprite.rect.topleft - self.offset
             self.display_surface.blit(sprite.image, offset_pos)
 
+class ActiveGroup(pygame.sprite.Group):
+    def __init__(self):
+        super().__init__()
+        
+    def run(self):
+        for sprite in self.sprites():
+            sprite.run()
 
 if __name__ == '__main__':
     from main import main
