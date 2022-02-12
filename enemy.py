@@ -5,10 +5,11 @@ from random import randint
 
 
 class Enemy(AnimatedTile):
-    def __init__(self, pos, size, groups: List[pygame.sprite.Group]) -> None:
+    def __init__(self, pos, size, groups: List[pygame.sprite.Group], constrains: pygame.sprite.Group) -> None:
         super().__init__(pos, size, 'assets/graphics/enemy/run', groups)
         self.rect.y += size - self.image.get_height()
         self.speed = randint(3, 6)
+        self.constrains = constrains
 
     def move(self):
         self.rect.x += self.speed
@@ -18,9 +19,15 @@ class Enemy(AnimatedTile):
             self.image = pygame.transform.flip(
                 self.image, flip_x=True, flip_y=False)
 
+    def constraint_collision(self):
+        for sprite in self.constrains.sprites():
+            if sprite.rect.colliderect(self.rect):
+                self.reverse()
+
     def run(self):
         self.animate()
         self.move()
+        self.constraint_collision()
         self.reverse_image()
 
     def reverse(self):

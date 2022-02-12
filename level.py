@@ -25,6 +25,8 @@ class Level:
         self.active_sprites = ActiveGroup()
         # sprites in this group will collide with player
         self.collision_sprites = pygame.sprite.Group()
+        # sprites in this group will constrain enemies
+        self.enemy_constrains = pygame.sprite.Group()
 
         # level setup
         level_data = levels[current_level]
@@ -156,9 +158,9 @@ class Level:
                         Palm((x, y), tile_size, 'assets/graphics/terrain/palm_bg',
                              64, [self.visible_sprites])
                     if layout_type == 'enemies':
-                        Enemy((x, y), tile_size, [self.visible_sprites, self.active_sprites])
+                        Enemy((x, y), tile_size, [self.visible_sprites, self.active_sprites], self.enemy_constrains)
                     if layout_type == 'constraints':
-                        Tile((x, y), tile_size, [self.collision_sprites])
+                        Tile((x, y), tile_size, [self.enemy_constrains])
                     if layout_type == 'player':
                         if cell == '0':
                             self.player = Player((x, y),
@@ -175,21 +177,6 @@ class Level:
                             self.goal = StaticTile((x, y), tile_size, hat_surface, [
                                                    self.visible_sprites])
 
-    def scroll_x(self):
-        player: Player = self.player
-        player_x = player.rect.centerx
-        direction_x = player.direction.x
-
-        if player_x < screen_width//4 and direction_x < 0:
-            self.world_shift = 8
-            player.speed = 0
-        elif player_x > screen_width-(screen_width//4) and direction_x > 0:
-            self.world_shift = -8
-            player.speed = 0
-        else:
-            self.world_shift = 0
-            player.speed = 8
-
     def input(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_RETURN]:
@@ -200,7 +187,7 @@ class Level:
             self.create_overworld(self.current_level, 0)
 
     def run(self):
-        # self.input()
+        self.input()
         self.sky.draw(self.display_surface)
         self.display_surface.blit(self.text_surface, self.text_rect)
 
@@ -223,12 +210,6 @@ class Level:
 
         # self.check_death()
         # self.check_win()
-
-    def enemy_constraint_collision(self):
-        enemy: Enemy
-        for enemy in self.enemies_sprites.sprites():
-            if pygame.sprite.spritecollide(enemy, self.constraints_sprites, dokill=False):
-                enemy.reverse()
 
     def check_death(self):
         if self.player.rect.top > screen_height:
