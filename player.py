@@ -34,7 +34,7 @@ class Player(pygame.sprite.Sprite):
         # player status
         self.status = 'idle'
         self.facing_right = True
-        self.on_ground = True
+        self.on_floor = True
 
         # health management
         self.change_health = change_health
@@ -94,7 +94,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom=(self.rect.midbottom))
 
     def run_dust_animation(self):
-        if self.status == 'run' and self.on_ground:
+        if self.status == 'run' and self.on_floor:
             self.dust_frame_index += self.dust_animation_speed
             if self.dust_frame_index >= len(self.dust_run_particles):
                 self.dust_frame_index = 0
@@ -143,7 +143,7 @@ class Player(pygame.sprite.Sprite):
             self.direction.x = 0
 
         # player jumps only if on the ground
-        if keys[pygame.K_SPACE] and self.on_ground:
+        if keys[pygame.K_SPACE] and self.on_floor:
             self.jump()
             self.create_jump_particles(self.rect.midbottom)
 
@@ -168,12 +168,37 @@ class Player(pygame.sprite.Sprite):
         self.direction.y = self.jump_speed
         self.jump_sound.play()
 
+    def horizontal_collisions(self):
+        self.collision_rect.x += self.direction.x * self.speed
+        for sprite in self.collisions_sprites.sprites():
+            if sprite.rect.colliderect(self.collision_rect):
+                if self.direction.x < 0:
+                    self.collision_rect.left = sprite.rect.right
+                if self.direction.x > 0:
+                    self.collision_rect.right = sprite.rect.left
+
+    def vertical_collisions(self):
+        for sprite in self.collisions_sprites.sprites():
+            if sprite.rect.colliderect(self.collision_rect):
+                if self.direction.y > 0:
+                    self.collision_rect.bottom = sprite.rect.top
+                    self.direction.y = 0
+                    self.on_floor = True
+                if self.direction.y < 0:
+                    self.collision_rect.top = sprite.rect.bottom
+                    self.direction.y = 0
+        if self.on_floor and self.direction.y != 0:
+            self.on_floor = False
+
     def update(self):
-        self.get_status()
+        self.get_input()
+        # self.get_status()
         self.animate()
         self.run_dust_animation()
-        self.get_input()
         self.invincibility_timer()
+        self.horizontal_collisions()
+        self.apply_gravity()
+        self.vertical_collisions()
 
 
 if __name__ == '__main__':

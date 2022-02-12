@@ -241,7 +241,6 @@ class Level:
 
     def vertical_movement_collision(self):
         player: Player = self.player
-        player.apply_gravity()
 
         collidable_sprites = self.terrain_sprites.sprites(
         ) + self.crates_sprites.sprites() + self.fg_palms_sprites.sprites()
@@ -255,10 +254,10 @@ class Level:
                     player.collision_rect.bottom = sprite.rect.top
                     # prevent from crossing the tile if player keeps standing on it
                     player.direction.y = 0
-                    player.on_ground = True
+                    player.on_floor = True
 
-        if player.on_ground and (player.direction.y < 0 or player.direction.y > player.gravity):
-            player.on_ground = False
+        if player.on_floor and (player.direction.y < 0 or player.direction.y > player.gravity):
+            player.on_floor = False
 
     def enemy_constraint_collision(self):
         enemy: Enemy
@@ -286,11 +285,11 @@ class Level:
         # save the on_ground state before the vertical collision
         # if there is a collision after, it means the player
         # was on the air
-        self.player_on_ground = self.player.on_ground
+        self.player_on_ground = self.player.on_floor
 
     def create_landing_dust(self):
         # check if player was on the air before the vertical collision
-        if not self.player_on_ground and self.player.on_ground and not self.dust_sprite.sprites():
+        if not self.player_on_ground and self.player.on_floor and not self.dust_sprite.sprites():
             if self.player.facing_right:
                 offset = pygame.math.Vector2(10, 15)
             else:
