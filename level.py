@@ -186,7 +186,7 @@ class Level:
 
         # self.scroll_x()
 
-        # self.check_death()
+        self.check_death()
         self.check_win()
 
     def check_death(self):
