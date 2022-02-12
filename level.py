@@ -1,7 +1,6 @@
 import pygame
 from decoration import Clouds, Sky, Water
 from enemy import Enemy
-from particles import ParticleEffect
 from player import Player
 from tiles import Coin, Crate, Palm, StaticTile, Tile
 from settings import TILE_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT, CAMERA_BORDERS
@@ -76,7 +75,8 @@ class Level:
 
         # enemy setup
         enemies_layout = import_csv_layout(level_data['enemies'])
-        self.create_tile_group(enemies_layout, 'enemies')
+        self.enemies_sprites = self.create_tile_group(
+            enemies_layout, 'enemies')
 
         # constraint
         constraints_layout = import_csv_layout(level_data['constraints'])
@@ -84,18 +84,16 @@ class Level:
 
         # player setup
         player_layout = import_csv_layout(level_data['player'])
-        self.goal = self.create_tile_group(player_layout, 'player', change_health)
-
-        # explosion particles
-        self.explosion_sprites = pygame.sprite.Group()
+        self.goal = self.create_tile_group(
+            player_layout, 'player', change_health)
 
         # ui
         self.change_coins = change_coins
         # audio
         self.coin_sound = pygame.mixer.Sound(
             resource_path('assets/audio/effects/coin.wav'))
-        self.stomp_sound = pygame.mixer.Sound(
-            resource_path('assets/audio/effects/stomp.wav'))
+        # self.stomp_sound = pygame.mixer.Sound(
+        #     resource_path('assets/audio/effects/stomp.wav'))
 
     def create_tile_group(self, layout: List, layout_type: str, change_health: Callable = None):
         sprite_group = pygame.sprite.Group()
@@ -125,7 +123,7 @@ class Level:
                     if layout_type == 'coins':
                         if cell == '0':
                             sprite = Coin((x, y), TILE_SIZE, 'assets/graphics/coins/gold',
-                                 5, [self.visible_sprites])
+                                          5, [self.visible_sprites])
                         else:
                             sprite = Coin(
                                 (x, y), TILE_SIZE, 'assets/graphics/coins/silver', 1, [self.visible_sprites])
@@ -141,7 +139,9 @@ class Level:
                         Palm((x, y), TILE_SIZE, 'assets/graphics/terrain/palm_bg',
                              64, [self.visible_sprites])
                     if layout_type == 'enemies':
-                        Enemy((x, y), TILE_SIZE, [self.visible_sprites, self.active_sprites], self.enemy_constrains)
+                        sprite = Enemy((x, y), TILE_SIZE, [
+                                       self.visible_sprites, self.active_sprites], self.enemy_constrains)
+                        sprite_group.add(sprite)
                     if layout_type == 'constraints':
                         Tile((x, y), TILE_SIZE, [self.enemy_constrains])
                     if layout_type == 'player':
@@ -151,13 +151,14 @@ class Level:
                                                  change_health,
                                                  [self.visible_sprites,
                                                      self.active_sprites],
-                                                 self.collision_sprites
+                                                 self.collision_sprites,
+                                                 self.enemies_sprites
                                                  )
                         if cell == '1':
                             hat_surface = pygame.image.load(resource_path(
                                 'assets/graphics/character/hat.png')).convert_alpha()
                             sprite = StaticTile((x, y), TILE_SIZE, hat_surface, [
-                                                   self.visible_sprites])
+                                self.visible_sprites])
                             sprite_group.add(sprite)
         return sprite_group
 
@@ -175,16 +176,11 @@ class Level:
         self.sky.draw(self.display_surface)
         self.display_surface.blit(self.text_surface, self.text_rect)
 
-        self.active_sprites.run()
-        self.visible_sprites.custom_draw(self.player)
-
         # player
         self.check_coin_collisions()
-        # self.check_enemy_collisions()
 
-        # self.water.draw(self.display_surface, self.world_shift)
-
-        # self.scroll_x()
+        self.active_sprites.run()
+        self.visible_sprites.custom_draw(self.player)
 
         self.check_death()
         self.check_win()
@@ -204,25 +200,6 @@ class Level:
             self.coin_sound.play()
             for coin in collided_coins:
                 self.change_coins(coin.value)
-
-    def check_enemy_collisions(self):
-        enemy_collisions: List[Enemy] = pygame.sprite.spritecollide(
-            self.player, self.enemies_sprites, False)
-
-        if enemy_collisions:
-            for enemy in enemy_collisions:
-                enemy_center = enemy.rect.centery
-                enemy_top = enemy.rect.top
-                player_bottom = self.player.rect.bottom
-                if enemy_top < player_bottom < enemy_center and self.player.direction.y > 0:
-                    self.stomp_sound.play()
-                    self.player.direction.y = -15
-                    explosion_sprite = ParticleEffect(
-                        enemy.rect.center, 'explosion')
-                    self.explosion_sprites.add(explosion_sprite)
-                    enemy.kill()
-                else:
-                    self.player.get_damage()
 
 
 class CameraGroup(pygame.sprite.Group):
@@ -280,13 +257,15 @@ class CameraGroup(pygame.sprite.Group):
             offset_pos = sprite.rect.topleft - self.offset
             self.display_surface.blit(sprite.image, offset_pos)
 
+
 class ActiveGroup(pygame.sprite.Group):
     def __init__(self):
         super().__init__()
-        
+
     def run(self):
         for sprite in self.sprites():
             sprite.run()
+
 
 if __name__ == '__main__':
     from main import main

@@ -11,7 +11,8 @@ class Player(pygame.sprite.Sprite):
                  surface: pygame.Surface,
                  change_health: Callable,
                  groups: List[pygame.sprite.Group],
-                 collisions_sprites: pygame.sprite.Group
+                 collisions_sprites: pygame.sprite.Group,
+                 enemies_sprites: pygame.sprite.Group
                  ) -> None:
         super().__init__(groups)
         self.import_character_assets()
@@ -30,6 +31,7 @@ class Player(pygame.sprite.Sprite):
         self.collision_rect = pygame.Rect(
             self.rect.topleft, (50, self.rect.height))
         self.collisions_sprites = collisions_sprites
+        self.enemies_sprites = enemies_sprites
 
         # player status
         self.status = 'idle'
@@ -53,6 +55,8 @@ class Player(pygame.sprite.Sprite):
         self.jump_sound.set_volume(0.5)
         self.hit_sound = pygame.mixer.Sound(
             resource_path('assets/audio/effects/hit.wav'))
+        self.stomp_sound = pygame.mixer.Sound(
+            resource_path('assets/audio/effects/stomp.wav'))
 
     def import_character_assets(self):
         character_path = 'assets/graphics/character/'
@@ -145,17 +149,6 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_SPACE] and self.on_floor:
             self.jump()
 
-    def get_status(self):
-        if self.direction.y < 0:
-            self.status = 'jump'
-        elif self.direction.y > self.gravity:
-            self.status = 'fall'
-        else:
-            if self.direction.x != 0:
-                self.status = 'run'
-            else:
-                self.status = 'idle'
-
     def apply_gravity(self):
         # contantly updates direction.y to get acceleration sensation
         self.direction.y += self.gravity
@@ -171,6 +164,18 @@ class Player(pygame.sprite.Sprite):
         else:
             pos += pygame.math.Vector2(5, 5)
         ParticleEffect(pos, 'jump', self.groups())
+
+    def check_enemy_collisions(self):
+        for enemy in self.enemies_sprites.sprites():
+            if enemy.rect.colliderect(self.collision_rect):
+                if self.direction.y > 0:
+                    self.stomp_sound.play()
+                    self.direction.y = -20
+                    ParticleEffect(
+                        enemy.rect.center, 'explosion', self.groups())
+                    enemy.kill()
+                else:
+                    self.get_damage()
 
     def horizontal_collisions(self):
         self.collision_rect.x += self.direction.x * self.speed
@@ -212,6 +217,7 @@ class Player(pygame.sprite.Sprite):
         self.animate()
         self.run_dust_animation()
         self.invincibility_timer()
+        self.check_enemy_collisions()
         self.horizontal_collisions()
         self.apply_gravity()
         self.vertical_collisions()

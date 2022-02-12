@@ -1,6 +1,5 @@
 from typing import List
 import pygame
-
 from support import resource_path, import_folder
 
 
