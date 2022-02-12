@@ -23,6 +23,8 @@ class Enemy(AnimatedTile):
         for sprite in self.constrains.sprites():
             if sprite.rect.colliderect(self.rect):
                 self.reverse()
+                # break avoids colliding twice when one constrain is right above the other
+                break
 
     def run(self):
         self.animate()
