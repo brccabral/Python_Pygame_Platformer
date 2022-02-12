@@ -68,7 +68,7 @@ class Level:
 
         # crates setup
         coins_layout = import_csv_layout(level_data['coins'])
-        self.create_tile_group(coins_layout, 'coins')
+        self.coins_sprites = self.create_tile_group(coins_layout, 'coins')
 
         # foreground palms setup
         fg_palms_layout = import_csv_layout(level_data['fg_palms'])
@@ -98,6 +98,7 @@ class Level:
             resource_path('assets/audio/effects/stomp.wav'))
 
     def create_tile_group(self, layout: List, layout_type: str, change_health: Callable = None):
+        sprite_group = pygame.sprite.Group()
         if layout_type == 'terrain':
             terrain_tile_list = import_cut_graphics(
                 resource_path('assets/graphics/terrain/terrain_tiles.png'))
@@ -123,11 +124,12 @@ class Level:
                               self.visible_sprites, self.collision_sprites])
                     if layout_type == 'coins':
                         if cell == '0':
-                            Coin((x, y), TILE_SIZE, 'assets/graphics/coins/gold',
+                            sprite = Coin((x, y), TILE_SIZE, 'assets/graphics/coins/gold',
                                  5, [self.visible_sprites])
                         else:
-                            Coin(
+                            sprite = Coin(
                                 (x, y), TILE_SIZE, 'assets/graphics/coins/silver', 1, [self.visible_sprites])
+                        sprite_group.add(sprite)
                     if layout_type == 'fg_palms':
                         if cell == '0':
                             Palm((x, y), TILE_SIZE, 'assets/graphics/terrain/palm_small',
@@ -156,6 +158,7 @@ class Level:
                                 'assets/graphics/character/hat.png')).convert_alpha()
                             self.goal = StaticTile((x, y), TILE_SIZE, hat_surface, [
                                                    self.visible_sprites])
+        return sprite_group
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -175,7 +178,7 @@ class Level:
         self.visible_sprites.custom_draw(self.player)
 
         # player
-        # self.check_coin_collisions()
+        self.check_coin_collisions()
         # self.check_enemy_collisions()
 
         # self.water.draw(self.display_surface, self.world_shift)
