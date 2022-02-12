@@ -5,11 +5,15 @@ from settings import vertical_tile_number, tile_size, screen_width
 from tiles import AnimatedTile, StaticTile
 from random import choice, randint
 
+
 class Sky:
-    def  __init__(self, horizon, style = 'level') -> None:
-        self.top = pygame.image.load(resource_path('assets/graphics/decoration/sky/sky_top.png')).convert()
-        self.bottom = pygame.image.load(resource_path('assets/graphics/decoration/sky/sky_bottom.png')).convert()
-        self.middle = pygame.image.load(resource_path('assets/graphics/decoration/sky/sky_middle.png')).convert()
+    def __init__(self, horizon, style='level') -> None:
+        self.top = pygame.image.load(resource_path(
+            'assets/graphics/decoration/sky/sky_top.png')).convert()
+        self.bottom = pygame.image.load(resource_path(
+            'assets/graphics/decoration/sky/sky_bottom.png')).convert()
+        self.middle = pygame.image.load(resource_path(
+            'assets/graphics/decoration/sky/sky_middle.png')).convert()
         self.horizon = horizon
 
         self.style = style
@@ -18,8 +22,8 @@ class Sky:
             self.palms = []
             for surface in [choice(palm_surfaces) for _ in range(10)]:
                 x = randint(0, screen_width)
-                y = self.horizon*tile_size + randint(50,100)
-                rect = surface.get_rect(midbottom = (x,y))
+                y = self.horizon*tile_size + randint(50, 100)
+                rect = surface.get_rect(midbottom=(x, y))
                 self.palms.append((surface, rect))
 
             cloud_surfaces = import_folder('assets/graphics/overworld/clouds')
@@ -27,29 +31,32 @@ class Sky:
             for surface in [choice(cloud_surfaces) for _ in range(10)]:
                 x = randint(0, screen_width)
                 y = randint(0, self.horizon*tile_size - 100)
-                rect = surface.get_rect(midbottom = (x,y))
+                rect = surface.get_rect(midbottom=(x, y))
                 self.clouds.append((surface, rect))
-        
+
         # stretch
         self.top = pygame.transform.scale(self.top, (screen_width, tile_size))
-        self.bottom = pygame.transform.scale(self.bottom, (screen_width, tile_size))
-        self.middle = pygame.transform.scale(self.middle, (screen_width, tile_size))
+        self.bottom = pygame.transform.scale(
+            self.bottom, (screen_width, tile_size))
+        self.middle = pygame.transform.scale(
+            self.middle, (screen_width, tile_size))
 
     def draw(self, surface: pygame.Surface):
         for row in range(vertical_tile_number):
             y = row * tile_size
             if row < self.horizon:
-                surface.blit(self.top, (0,y))
+                surface.blit(self.top, (0, y))
             elif row == self.horizon:
-                surface.blit(self.middle, (0,y))
+                surface.blit(self.middle, (0, y))
             else:
-                surface.blit(self.bottom, (0,y))
-        
+                surface.blit(self.bottom, (0, y))
+
         if self.style == 'overworld':
             for palm_surf, palm_rect in self.palms:
                 surface.blit(palm_surf, palm_rect)
             for cloud_surf, cloud_rect in self.clouds:
                 surface.blit(cloud_surf, cloud_rect)
+
 
 class Water:
     # the water needs to stretch more than the level width
@@ -62,8 +69,10 @@ class Water:
         for tile in range(tile_x_amount):
             x = tile * water_tile_width + water_start
             y = top
-            sprite = AnimatedTile((x,y), water_tile_width, 'assets/graphics/decoration/water', groups)
-    
+            sprite = AnimatedTile((x, y), water_tile_width,
+                                  'assets/graphics/decoration/water', groups)
+
+
 class Clouds:
     def __init__(self, horizon, level_width, cloud_number, groups: List[pygame.sprite.Group]) -> None:
         cloud_surface_list = import_folder('assets/graphics/decoration/clouds')
@@ -76,8 +85,9 @@ class Clouds:
             cloud_surface = choice(cloud_surface_list)
             x = randint(min_x, max_x)
             y = randint(min_y, max_y)
-            StaticTile((x,y), 0, cloud_surface, groups)
-    
+            StaticTile((x, y), 0, cloud_surface, groups)
+
+
 if __name__ == '__main__':
     from main import main
     main()

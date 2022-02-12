@@ -98,7 +98,7 @@ level_5 = {
     'constraints': 'assets/levels/5/level_5_constraints.csv',
     'player': 'assets/levels/5/level_5_player.csv',
     'grass': 'assets/levels/5/level_5_grass.csv',
-    'node_pos': (1050,400),
+    'node_pos': (1050, 400),
     'unlock': 5,
     'content': 'Level 5',
     'node_graphics': 'assets/graphics/overworld/5'

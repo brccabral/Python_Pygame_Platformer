@@ -1,19 +1,22 @@
 import pygame
 from support import import_folder
 
+
 class ParticleEffect(pygame.sprite.Sprite):
     def __init__(self, pos, particle_type) -> None:
         super().__init__()
         self.frame_index = 0
         self.animation_speed = 0.5
         if particle_type == 'jump':
-            self.frames = import_folder('assets/graphics/character/dust_particles/jump')
+            self.frames = import_folder(
+                'assets/graphics/character/dust_particles/jump')
         if particle_type == 'land':
-            self.frames = import_folder('assets/graphics/character/dust_particles/land')
+            self.frames = import_folder(
+                'assets/graphics/character/dust_particles/land')
         if particle_type == 'explosion':
             self.frames = import_folder('assets/graphics/enemy/explosion')
         self.image = self.frames[self.frame_index]
-        self.rect = self.image.get_rect(center = pos)
+        self.rect = self.image.get_rect(center=pos)
 
     def animate(self):
         self.frame_index += self.animation_speed
@@ -21,10 +24,11 @@ class ParticleEffect(pygame.sprite.Sprite):
             self.kill()
         else:
             self.image = self.frames[int(self.frame_index)]
-        
+
     def update(self, x_shift):
         self.animate()
         self.rect.x += x_shift
+
 
 if __name__ == '__main__':
     from main import main
